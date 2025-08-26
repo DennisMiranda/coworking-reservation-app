@@ -1,0 +1,25 @@
+---
+import "../styles/global.css";
+import bg from "../assets/bg.jpg";
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <title>Coworking Reservation App Login</title>
+  </head>
+  <body>
+    <main class="h-screen justify-center items-center relative">
+      <img
+        src={bg.src}
+        alt="Background-office"
+        class="w-full h-full absolute object-cover -z-1"
+      />
+      <slot />
+    </main>
+  </body>
+</html>
