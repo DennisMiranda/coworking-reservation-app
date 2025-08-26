@@ -1,5 +1,26 @@
 @import "tailwindcss";
 
+@theme {
+  --color-primary: #24211e;
+}
+
+input {
+  outline: none;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+  background-color: transparent !important;
+  background-clip: text;
+  -webkit-text-fill-color: white !important;
+  caret-color: white !important;
+}
+
+button {
+  cursor: pointer;
+}
+
 html,
 body {
   margin: 0;
@@ -11,10 +32,4 @@ body {
   font-family: Inter, Roboto, "Helvetica Neue", "Arial Nova", "Nimbus Sans",
     Arial, sans-serif;
   height: 100%;
-}
-
-main {
-  height: 100%;
-  display: flex;
-  justify-content: center;
 }

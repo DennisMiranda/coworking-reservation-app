@@ -1,0 +1,65 @@
+---
+import { Icon } from "astro-icon/components";
+---
+
+<div class="text-white flex-1 h-3/5 lg:h-full p-8
+justify-center">
+  <h2 class="text-2xl font-bold text-center">Create Account</h2>
+  <form action="submit">
+    <input
+      type="text"
+      name="name"
+      placeholder="Name"
+      class="w-full mb-2 p-2 border-b border-white"
+    />
+    <input
+      type="text"
+      name="last_name"
+      placeholder="Last Name"
+      class="w-full mb-2 p-2 border-b border-white"
+    />
+    <input
+      type="email"
+      name="email"
+      placeholder="Email"
+      class="w-full mb-2 p-2 border-b border-white"
+    />
+    <input
+      type="password"
+      name="password"
+      placeholder="Password"
+      class="w-full mb-2 p-2 border-b border-white"
+    />
+    <input
+      type="password"
+      name="confirm_password"
+      placeholder="Confirm Password"
+      class="w-full mb-2 p-2 border-b border-white"
+    />
+    <button
+      type="submit"
+      class="w-full flex justify-center gap-2 bg-primary hover:bg-primary/80 rounded-full p-2 px-4 mt-4"
+      >Sign Up</button
+    >
+    <div class="flex items-center gap-2">
+      <hr class="my-4 flex-1" />
+      <span class="text-white pb-1">or</span>
+      <hr class="my-4 flex-1" />
+    </div>
+
+    <button
+      type="button"
+      class="w-full text-primary flex justify-center items-center gap-2 bg-white hover:bg-white/90 rounded-full p-2 px-4"
+    >
+      <Icon name="google" size={20} />
+      Sign Up with Google
+    </button>
+
+    <p class="text-center mt-4">
+      Already have an account? <a
+        href="/login"
+        class="font-bold hover:underline">Login</a
+      >
+    </p>
+  </form>
+</div>
