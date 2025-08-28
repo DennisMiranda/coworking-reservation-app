@@ -1,0 +1,109 @@
+---
+import { Icon } from "astro-icon/components";
+---
+
+<div class="text-white flex-1 h-3/5 lg:h-full p-8
+justify-center">
+  <h2 class="text-2xl font-bold text-center mb-4">Sign In</h2>
+  <form>
+    <input
+      type="email"
+      name="email"
+      placeholder="Email"
+      required
+      class="w-full mb-2 p-2 border-b border-white"
+    />
+    <input
+      type="password"
+      name="password"
+      placeholder="Password"
+      required
+      class="w-full mb-2 p-2 border-b border-white"
+    />
+    <p id="error-message" class="text-white/80 text-sm"></p>
+    <button
+      id="btn-sign-in-email"
+      type="submit"
+      class="w-full flex justify-center gap-2 bg-primary hover:bg-primary/80 rounded-full p-2 px-4 mt-4"
+      >Sign In</button
+    >
+    <div class="flex items-center gap-2">
+      <hr class="my-4 flex-1" />
+      <span class="text-white pb-1">or </span>
+      <hr class="my-4 flex-1" />
+    </div>
+
+    <button
+      id="btn-sign-in-google"
+      type="button"
+      class="w-full text-primary flex justify-center items-center gap-2 bg-white hover:bg-white/90 rounded-full p-2 px-4"
+    >
+      <Icon name="google" size={20} />
+      <span id="google-message">Google</span>
+    </button>
+
+    <p class="text-center mt-4">
+      Don't have an account? <a
+        href="/register"
+        class="font-bold hover:underline">Register</a
+      >
+    </p>
+  </form>
+</div>
+
+<script type="module">
+  import { signInWithGoogle, signInWithEmail } from "/src/services/auth";
+
+  const form = document.querySelector("form");
+  const errorMessage = document.getElementById("error-message");
+  const btnSignInGoogle = document.getElementById("btn-sign-in-google");
+  const btnSignInEmail = document.getElementById("btn-sign-in-email");
+  const googleMessage = document.getElementById("google-message");
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    errorMessage.textContent = "";
+    const email = form.email.value;
+    const password = form.password.value;
+
+    //Disable button
+    btnSignInEmail.disabled = true;
+    btnSignInGoogle.disabled = true;
+    btnSignInEmail.textContent = "Signing in...";
+
+    const { success, message } = await signInWithEmail(email, password);
+
+    if (success) {
+      window.location.href = "/";
+    } else {
+      errorMessage.textContent = message;
+    }
+    //Enable button
+    btnSignInEmail.disabled = false;
+    btnSignInGoogle.disabled = false;
+    btnSignInEmail.textContent = "Sign In";
+  });
+
+  form.addEventListener("input", () => {
+    errorMessage.textContent = "";
+  });
+
+  btnSignInGoogle.addEventListener("click", async () => {
+    //Disable button
+    btnSignInGoogle.disabled = true;
+    btnSignInEmail.disabled = true;
+    googleMessage.textContent = "Signing in...";
+
+    //Result and redirect
+    const { success, message } = await signInWithGoogle();
+    if (success) {
+      window.location.href = "/";
+    } else {
+      errorMessage.textContent = message;
+    }
+    //Enable button
+    btnSignInGoogle.disabled = false;
+    btnSignInEmail.disabled = false;
+    googleMessage.textContent = "Google";
+  });
+</script>

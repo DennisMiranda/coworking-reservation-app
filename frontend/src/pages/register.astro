@@ -1,6 +1,6 @@
 ---
-import LeftLogin from "../components/login-register/LeftLogin.astro";
-import RightRegister from "../components/login-register/RightRegister.astro";
+import WelcomeMessage from "../components/auth/WelcomeMessage.astro";
+import Register from "../components/auth/Register.astro";
 import LayoutLogin from "../layouts/LayoutLogin.astro";
 ---
 
@@ -14,11 +14,11 @@ import LayoutLogin from "../layouts/LayoutLogin.astro";
       >
         <!-- Coworking App Info -->
         <div class="flex-1">
-          <LeftLogin />
+          <WelcomeMessage />
         </div>
 
         <!-- Login Form -->
-        <div class="flex-1"><RightRegister /></div>
+        <div class="flex-1"><Register /></div>
       </div>
     </div>
   </LayoutLogin>
