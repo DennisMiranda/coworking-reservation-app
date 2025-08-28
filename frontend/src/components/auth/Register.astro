@@ -1,0 +1,115 @@
+---
+import { Icon } from "astro-icon/components";
+---
+
+<div class="text-white flex-1 h-3/5 lg:h-full p-8
+justify-center">
+  <h2 class="text-2xl font-bold text-center">Create Account</h2>
+  <form>
+    <input
+      type="text"
+      name="name"
+      placeholder="Name"
+      required
+      class="w-full mb-2 p-2 border-b border-white"
+    />
+    <input
+      type="text"
+      name="last_name"
+      placeholder="Last Name"
+      required
+      class="w-full mb-2 p-2 border-b border-white"
+    />
+    <input
+      type="email"
+      name="email"
+      placeholder="Email"
+      required
+      class="w-full mb-2 p-2 border-b border-white"
+    />
+    <input
+      id="password"
+      type="password"
+      name="password"
+      placeholder="Password"
+      required
+      class="w-full mb-2 p-2 border-b border-white"
+    />
+    <input
+      id="confirm_password"
+      type="password"
+      name="confirm_password"
+      placeholder="Confirm Password"
+      required
+      class="w-full mb-2 p-2 border-b border-white"
+    />
+    <p id="password-error" class="text-xs text-white/80"></p>
+    <button
+      type="submit"
+      class="w-full flex justify-center gap-2 bg-primary hover:bg-primary/80 rounded-full p-2 px-4 mt-4"
+      >Sign Up</button
+    >
+    <div class="flex items-center gap-2">
+      <hr class="my-4 flex-1" />
+      <span class="text-white pb-1">or</span>
+      <hr class="my-4 flex-1" />
+    </div>
+
+    <button
+      id="btn-sign-up-google"
+      type="button"
+      class="w-full text-primary flex justify-center items-center gap-2 bg-white hover:bg-white/90 rounded-full p-2 px-4"
+    >
+      <Icon name="google" size={20} />
+      Sign Up with Google
+    </button>
+
+    <p class="text-center mt-4">
+      Already have an account? <a
+        href="/login"
+        class="font-bold hover:underline">Login</a
+      >
+    </p>
+  </form>
+</div>
+
+<script type="module">
+  import { signUpWithEmail, signInWithGoogle } from "/src/services/auth";
+  import { validatePassword } from "/src/utils/password";
+
+  const form = document.querySelector("form");
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const name = form.name.value;
+    const lastName = form.last_name.value;
+    const email = form.email.value;
+    const password = form.password.value;
+    const confirmPassword = form.confirm_password.value;
+    const { result } = validatePassword(password, confirmPassword);
+    if (result) {
+      await signUpWithEmail({ name, lastName, email, pass: password }, "user");
+    }
+  });
+
+  const btnSignUpGoogle = document.getElementById("btn-sign-up-google");
+  btnSignUpGoogle.addEventListener("click", async () => {
+    const result = await signInWithGoogle();
+    if (result) {
+      window.location.href = "/";
+    }
+  });
+
+  //Validate password
+  const password = document.getElementById("password");
+  const confirmPassword = document.getElementById("confirm_password");
+  const confirmPasswordError = document.getElementById("password-error");
+
+  password.addEventListener("input", () => {
+    const { message } = validatePassword(password.value, confirmPassword.value);
+    confirmPasswordError.textContent = message;
+  });
+  confirmPassword.addEventListener("input", () => {
+    const { message } = validatePassword(password.value, confirmPassword.value);
+    confirmPasswordError.textContent = message;
+  });
+</script>

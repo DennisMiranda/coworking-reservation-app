@@ -1,6 +1,11 @@
 ---
 import "../styles/global.css";
-import bg from "../assets/bg.jpg";
+import bg from "../assets/bg.webp";
+
+interface Props {
+  title?: string;
+}
+const { title } = Astro.props;
 ---
 
 <!doctype html>
@@ -10,7 +15,7 @@ import bg from "../assets/bg.jpg";
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
-    <title>Coworking Reservation App Login</title>
+    <title>{title}</title>
   </head>
   <body>
     <main class="h-screen justify-center items-center relative">

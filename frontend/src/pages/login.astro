@@ -1,11 +1,11 @@
 ---
-import LeftLogin from "../components/login-register/LeftLogin.astro";
-import RightLogin from "../components/login-register/RightLogin.astro";
+import WelcomeMessage from "../components/auth/WelcomeMessage.astro";
+import Login from "../components/auth/Login.astro";
 import LayoutLogin from "../layouts/LayoutLogin.astro";
 ---
 
 <div>
-  <LayoutLogin>
+  <LayoutLogin title="WorkSpace Login">
     <div
       class="h-full flex justify-center items-center px-6 md:p-0 bg-primary/45"
     >
@@ -14,11 +14,11 @@ import LayoutLogin from "../layouts/LayoutLogin.astro";
       >
         <!-- Coworking App Info -->
         <div class="flex-1">
-          <LeftLogin />
+          <WelcomeMessage />
         </div>
 
         <!-- Login Form -->
-        <div class="flex-1"><RightLogin /></div>
+        <div class="flex-1"><Login /></div>
       </div>
     </div>
   </LayoutLogin>

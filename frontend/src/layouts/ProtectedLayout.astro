@@ -1,0 +1,22 @@
+---
+import Layout from "./Layout.astro";
+---
+
+<Layout title={Astro.props.title}>
+  <div id="content" class="opacity-0 transition-opacity duration-500">
+    <slot />
+  </div>
+</Layout>
+
+<script>
+  import { $user } from "../stores/userStore";
+  const content = document.getElementById("content");
+  $user.subscribe((userState) => {
+    if (userState.isLoading) return;
+    if (!userState.data) {
+      window.location.href = "/login";
+    } else {
+      content?.classList.remove("opacity-0");
+    }
+  });
+</script>
