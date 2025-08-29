@@ -51,59 +51,75 @@ justify-center">
   </form>
 </div>
 
-<script type="module">
+<script>
   import { signInWithGoogle, signInWithEmail } from "/src/services/auth";
 
   const form = document.querySelector("form");
-  const errorMessage = document.getElementById("error-message");
-  const btnSignInGoogle = document.getElementById("btn-sign-in-google");
-  const btnSignInEmail = document.getElementById("btn-sign-in-email");
-  const googleMessage = document.getElementById("google-message");
+  const errorMessage = document.getElementById(
+    "error-message"
+  ) as HTMLParagraphElement;
+  const btnSignInGoogle = document.getElementById(
+    "btn-sign-in-google"
+  ) as HTMLButtonElement;
+  const btnSignInEmail = document.getElementById(
+    "btn-sign-in-email"
+  ) as HTMLButtonElement;
+  const googleMessage = document.getElementById(
+    "google-message"
+  ) as HTMLSpanElement;
 
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    errorMessage.textContent = "";
-    const email = form.email.value;
-    const password = form.password.value;
+  if (
+    form &&
+    btnSignInEmail &&
+    btnSignInGoogle &&
+    googleMessage &&
+    errorMessage
+  ) {
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      errorMessage.textContent = "";
+      const email = form.email.value;
+      const password = form.password.value;
 
-    //Disable button
-    btnSignInEmail.disabled = true;
-    btnSignInGoogle.disabled = true;
-    btnSignInEmail.textContent = "Signing in...";
+      //Disable button
+      btnSignInEmail.disabled = true;
+      btnSignInGoogle.disabled = true;
+      btnSignInEmail.textContent = "Signing in...";
 
-    const { success, message } = await signInWithEmail(email, password);
+      const { success, message } = await signInWithEmail(email, password);
 
-    if (success) {
-      window.location.href = "/";
-    } else {
-      errorMessage.textContent = message;
-    }
-    //Enable button
-    btnSignInEmail.disabled = false;
-    btnSignInGoogle.disabled = false;
-    btnSignInEmail.textContent = "Sign In";
-  });
+      if (success) {
+        window.location.href = "/";
+      } else {
+        errorMessage.textContent = message;
+      }
+      //Enable button
+      btnSignInEmail.disabled = false;
+      btnSignInGoogle.disabled = false;
+      btnSignInEmail.textContent = "Sign In";
+    });
 
-  form.addEventListener("input", () => {
-    errorMessage.textContent = "";
-  });
+    form.addEventListener("input", () => {
+      errorMessage.textContent = "";
+    });
 
-  btnSignInGoogle.addEventListener("click", async () => {
-    //Disable button
-    btnSignInGoogle.disabled = true;
-    btnSignInEmail.disabled = true;
-    googleMessage.textContent = "Signing in...";
+    btnSignInGoogle.addEventListener("click", async () => {
+      //Disable button
+      btnSignInGoogle.disabled = true;
+      btnSignInEmail.disabled = true;
+      googleMessage.textContent = "Signing in...";
 
-    //Result and redirect
-    const { success, message } = await signInWithGoogle();
-    if (success) {
-      window.location.href = "/";
-    } else {
-      errorMessage.textContent = message;
-    }
-    //Enable button
-    btnSignInGoogle.disabled = false;
-    btnSignInEmail.disabled = false;
-    googleMessage.textContent = "Google";
-  });
+      //Result and redirect
+      const { success, message } = await signInWithGoogle();
+      if (success) {
+        window.location.href = "/";
+      } else {
+        errorMessage.textContent = message;
+      }
+      //Enable button
+      btnSignInGoogle.disabled = false;
+      btnSignInEmail.disabled = false;
+      googleMessage.textContent = "Google";
+    });
+  }
 </script>

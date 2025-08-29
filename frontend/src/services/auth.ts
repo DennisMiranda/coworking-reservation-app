@@ -36,7 +36,7 @@ export const signInWithGoogle = async () => {
       },
       { merge: true }
     );
-    return saveUser;
+    return { success: true, message: "Success" };
   } catch (error) {
     const result = { success: false, message: "Error signing in with Google" };
     console.error("Error signing in with Google", error);
@@ -76,20 +76,21 @@ export const signUpWithEmail = async (
       role,
       provider: "email",
     });
-    return user;
+    return { success: true, message: "Success", data: user };
   } catch (error) {
     console.error("Error signing up: ", error);
-    return { success: false, message: "Error signing up" };
+    return { success: false, message: "Error signing up", data: null };
   }
 };
 
 //Login with email
 export const signInWithEmail = async (email: string, pass: string) => {
   try {
-    await signInWithEmailAndPassword(auth, email, pass);
-    return { success: true, message: "Success" };
+    const userCredential = await signInWithEmailAndPassword(auth, email, pass);
+    const user = userCredential.user;
+    return { success: true, message: "Success", data: user };
   } catch (error: unknown) {
-    const result = { success: false, message: "Error signing in" };
+    const result = { success: false, message: "Error signing in", data: null };
     console.error("Error signing in: ", error);
     if (
       error instanceof Error &&
@@ -105,7 +106,9 @@ export const signInWithEmail = async (email: string, pass: string) => {
 export const logOut = async () => {
   try {
     await signOut(auth);
+    return { success: true, message: "Success" };
   } catch (error) {
     console.error("Error signing out: ", error);
+    return { success: false, message: "Error signing out" };
   }
 };
