@@ -8,7 +8,7 @@ justify-center">
   <form>
     <input
       type="text"
-      name="name"
+      name="user_name"
       placeholder="Name"
       required
       class="w-full mb-2 p-2 border-b border-white"
@@ -77,10 +77,29 @@ justify-center">
   import { signUpWithEmail, signInWithGoogle } from "/src/services/auth";
   import { validatePassword } from "/src/utils/password";
 
-  const form = document.querySelector("form");
+  const form = document.querySelector("form") as HTMLFormElement;
+  const password = document.getElementById("password") as HTMLInputElement;
+  const confirmPassword = document.getElementById(
+    "confirm_password"
+  ) as HTMLInputElement;
+  const confirmPasswordError = document.getElementById(
+    "password-error"
+  ) as HTMLParagraphElement;
+  const btnSignUpGoogle = document.getElementById(
+    "btn-sign-up-google"
+  ) as HTMLButtonElement;
+
+  if (
+    form &&
+    password &&
+    confirmPassword &&
+    confirmPasswordError &&
+    btnSignUpGoogle
+  ) {
+
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
-    const name = form.name.value;
+    const name = form.user_name.value;
     const lastName = form.last_name.value;
     const email = form.email.value;
     const password = form.password.value;
@@ -91,25 +110,22 @@ justify-center">
     }
   });
 
-  const btnSignUpGoogle = document.getElementById("btn-sign-up-google");
-  btnSignUpGoogle.addEventListener("click", async () => {
-    const result = await signInWithGoogle();
-    if (result) {
-      window.location.href = "/";
-    }
-  });
+    btnSignUpGoogle.addEventListener("click", async () => {
+      const result = await signInWithGoogle();
+      if (result) {
+        window.location.href = "/";
+      }
+    });
 
   //Validate password
-  const password = document.getElementById("password");
-  const confirmPassword = document.getElementById("confirm_password");
-  const confirmPasswordError = document.getElementById("password-error");
 
-  password.addEventListener("input", () => {
-    const { message } = validatePassword(password.value, confirmPassword.value);
-    confirmPasswordError.textContent = message;
-  });
-  confirmPassword.addEventListener("input", () => {
-    const { message } = validatePassword(password.value, confirmPassword.value);
-    confirmPasswordError.textContent = message;
-  });
+    password.addEventListener("input", () => {
+      const { message } = validatePassword(password.value, confirmPassword.value);
+      confirmPasswordError.textContent = message;
+    });
+    confirmPassword.addEventListener("input", () => {
+      const { message } = validatePassword(password.value, confirmPassword.value);
+      confirmPasswordError.textContent = message;
+    });
+  }
 </script>
