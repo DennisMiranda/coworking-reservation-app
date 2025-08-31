@@ -5,4 +5,5 @@ export interface Product {
   capacity: number;
   price: number;
   image: string;
+  details: string[];
 }
