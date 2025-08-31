@@ -1,0 +1,40 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getAllProducts } from "../../services/products";
+import ProductDetail from "../../components/products/ProductDetail.astro";
+import ReservationForm from "../../components/reservation/ReservationForm.astro";
+export async function getStaticPaths() {
+  const products = await getAllProducts();
+  return products.map((product) => ({
+    params: { id: product.id },
+    props: { product },
+  }));
+}
+
+const { product } = Astro.props;
+---
+
+<Layout>
+  <h2 class="text-2xl font-bold mt-4 pt-8 text-center">Booking your space</h2>
+  <!-- Details -->
+  <ProductDetail product={product} />
+  <!-- Reservation  -->
+  <section class="max-w-6xl mx-auto p-6">
+    <h2 class="text-xl font-bold mb-4">Choose your date</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+      <!-- Calendar -->
+      <div class="flex justify-center w-full md:h-150 h-130 md:col-span-2">
+        <div id="calendar" class="bg-white w-full"></div>
+      </div>
+      <!-- Confirmation form -->
+      <div class="flex flex-col backdrop-blur-sm rounded-lg md:col-span-1">
+        <ReservationForm />
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  import { initCalendar } from "/src/utils/calendar.ts";
+  initCalendar("calendar");
+</script>
