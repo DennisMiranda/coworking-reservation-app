@@ -1,0 +1,42 @@
+---
+import type { Product } from "../../models/product";
+import { Icon } from "astro-icon/components";
+const { product } = Astro.props;
+const { id, title, address, capacity, price, image, details } =
+  product as Product;
+---
+
+<section class="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 max-w-6xl mx-auto">
+  <!-- Imagen -->
+  <div>
+    <img src={image} alt={title} class="rounded-xl shadow-md" />
+  </div>
+
+  <!-- Info -->
+  <div class="text-primary flex flex-col md:gap-2">
+    <h3 class="text-xl font-bold mb-2">{title}</h3>
+    <p>{address}</p>
+    <div class="flex gap-4">
+      <span class="flex items-center gap-2">
+        <Icon name="people" size={18} />
+        {capacity} people
+      </span>
+      <span class="flex items-center gap-2">
+        <Icon name="price" size={16} />
+        {price} / hour
+      </span>
+    </div>
+
+    <p class="text-lg font-semibold mt-4 mb-2">Details</p>
+    <ul class="space-y-1 grid grid-cols-2">
+      {
+        details.map((detail) => (
+          <li class="flex items-center gap-2">
+            <Icon name="check" size={16} />
+            {detail}
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
