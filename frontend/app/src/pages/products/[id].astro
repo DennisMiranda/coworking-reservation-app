@@ -28,7 +28,7 @@ const { product } = Astro.props;
       </div>
       <!-- Confirmation form -->
       <div class="flex flex-col backdrop-blur-sm rounded-lg md:col-span-1">
-        <ReservationForm />
+        <ReservationForm product_id={product.id} />
       </div>
     </div>
   </section>

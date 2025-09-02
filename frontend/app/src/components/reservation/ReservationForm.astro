@@ -1,39 +1,65 @@
+---
+const { product_id } = Astro.props;
+---
+
 <p class="text-xl font-bold px-6 text-primary flex">Confirm your reservation</p>
-<form class="p-6">
-  <p>Room</p>
+<form class="p-6" data-product-id={product_id}>
+  <label for="date" class="text-sm font-semibold">Date</label>
   <input
-    type="date"
+    id="date"
     name="date"
-    class="w-full mb-2 p-2 border-b border-primary/80 text-primary"
-    placeholder="Date"
+    class="w-full mb-2 pb-2 border-b border-primary/80 text-primary italic"
     required
+    readonly
   />
+  <label for="time" class="text-sm font-semibold">Time</label>
+  <div class="flex gap-4">
+    <input
+      id="time-start"
+      name="time-start"
+      class="w-full mb-2 pb-2 border-b border-primary/80 text-primary italic"
+      required
+      readonly
+    />
+    <input
+      id="time-end"
+      name="time-end"
+      class="w-full mb-2 pb-2 border-b border-primary/80 text-primary italic"
+      required
+      readonly
+    />
+  </div>
+
+  <label for="title" class="text-sm font-semibold">Reservation Title</label>
   <input
-    type="time"
-    name="time"
-    class="w-full mb-2 p-2 border-b border-primary/80 text-primary"
-    placeholder="Time"
+    type="text"
+    name="title"
+    class="w-full mb-2 pb-2 border-b border-primary/80 text-primary italic"
+    placeholder="3Q Meeting"
     required
   />
+  <label for="name" class="text-sm font-semibold">Client name</label>
   <input
     type="text"
     name="name"
-    class="w-full mb-2 p-2 border-b border-primary/80 text-primary"
-    placeholder="Reservation Name"
+    class="w-full mb-2 pb-2 border-b border-primary/80 text-primary italic"
+    placeholder="John Doe"
     required
   />
+  <label for="email" class="text-sm font-semibold">Email</label>
   <input
     type="email"
     name="email"
-    class="w-full mb-2 p-2 border-b border-primary/80 text-primary"
-    placeholder="Email"
+    class="w-full mb-2 pb-2 border-b border-primary/80 text-primary italic"
+    placeholder="john.doe@example.com"
     required
   />
+  <label for="phone" class="text-sm font-semibold">Phone</label>
   <input
-    type="text"
+    type="number"
     name="phone"
-    class="w-full mb-2 p-2 border-b border-primary/80 text-primary"
-    placeholder="Phone"
+    class="w-full mb-2 pb-2 border-b border-primary/80 text-primary italic"
+    placeholder="123-456-7890"
     required
   />
   <div class="flex justify-center w-full">
@@ -45,3 +71,59 @@
     </button>
   </div>
 </form>
+
+<script>
+  import { watchForSelectionDate } from "/src/utils/calendar.ts";
+  import { saveReservation } from "/src/services/reservations.ts";
+  const timeStart = document.getElementById("time-start") as HTMLInputElement;
+  const timeEnd = document.getElementById("time-end") as HTMLInputElement;
+  const day = document.getElementById("date") as HTMLInputElement;
+  const form = document.querySelector("form") as HTMLFormElement;
+
+  let startDate = "";
+  let endDate = "";
+
+  watchForSelectionDate((start, end) => {
+    startDate = start;
+    endDate = end;
+    if (timeStart && timeEnd && day) {
+      timeStart.value = new Date(start).toLocaleTimeString("es-ES", {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+      timeEnd.value = new Date(end).toLocaleTimeString("es-ES", {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+      day.value = new Date(start).toLocaleDateString("es-ES", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      });
+    }
+  });
+
+  if (form) {
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const formData = new FormData(form);
+      const reservation = {
+        client: {
+          name: formData.get("name") as string,
+          email: formData.get("email") as string,
+          phone: Number(formData.get("phone")),
+        },
+        title: formData.get("title") as string,
+        start: startDate,
+        end: endDate,
+        userId: "1",
+        productId: form.dataset.productId as string,
+      };
+      const { success, message } = await saveReservation(reservation);
+      if (success) {
+        alert(message);
+        form.reset();
+      }
+    });
+  }
+</script>
