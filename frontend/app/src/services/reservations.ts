@@ -24,7 +24,7 @@ export const saveReservation = async (reservation: Reservation) => {
       user_id: userId,
       product_id: productId,
     });
-    return { success: true, message: "Reservation saved successfully" };
+    return { success: true, message: "Reservation saved successfully", data: { id: docRef.id } };
   } catch (error) {
     console.error("Error saving reservation: ", error);
     return { success: false, message: "Error saving reservation" };

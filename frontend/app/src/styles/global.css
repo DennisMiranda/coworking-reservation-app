@@ -33,3 +33,37 @@ body {
     Arial, sans-serif;
   height: 100%;
 }
+
+/* Calendar styles */
+.fc-day-disabled {
+  background-color: #f0f0f0 !important;
+  color: #aaa !important;
+  pointer-events: none; 
+}
+
+.fc-day-today {
+  background-color:transparent !important; 
+}
+
+
+.fc-toolbar-title {
+  font-size: 1.3rem !important;
+  font-weight: 600 !important;
+}
+
+@media (max-width: 768px) {
+  .fc-button {
+    padding: 0.3rem !important;
+  }
+}
+
+.fc-button-primary {
+  background-color: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
+}
+
+.fc-timeGridWeek-button {
+  background-color: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
+  opacity: 0.8;
+}
