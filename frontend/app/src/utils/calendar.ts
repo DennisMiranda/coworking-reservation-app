@@ -11,9 +11,10 @@ export function initCalendar(id: string) {
     const calendar = new Calendar(calendarEl, {
       plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
       initialView: "dayGridMonth",
+
       // Buttons to change view
       headerToolbar: {
-        left: "prev,next today",
+        left: "prev,next",
         center: "title",
         right: "dayGridMonth,timeGridWeek",
       },
@@ -24,6 +25,42 @@ export function initCalendar(id: string) {
       //Allow selection
       selectable: true,
       selectMirror: true,
+
+      // Block previous days
+      datesSet: (info) => {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        const prevButton = calendarEl.querySelector(
+          ".fc-prev-button"
+        ) as HTMLButtonElement;
+        if (info.start < new Date(today.getFullYear(), today.getMonth(), 1)) {
+          prevButton.setAttribute("disabled", "true");
+        } else {
+          prevButton.removeAttribute("disabled");
+        }
+      },
+
+      // Restringir selección
+      selectAllow: (selectInfo) => {
+        const now = new Date();
+        const start = selectInfo.start;
+
+        // No permitir fechas pasadas
+        if (start < now) return false;
+
+        return true;
+      },
+
+      // Colorear días pasados en gris
+      dayCellClassNames: (arg) => {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        if (arg.date < today) {
+          return ["fc-day-disabled"];
+        }
+        return [];
+      },
 
       // Function to handle selection
       select: function (info) {
@@ -51,9 +88,15 @@ export function initCalendar(id: string) {
       //Date booking message
       events: [
         {
-          title: "Booking",
-          start: "2025-09-04T23:00:00.000Z",
-          end: "2025-09-04T23:30:00.000Z",
+          start: new Date().setHours(8, 0, 0, 0),
+          end: (function () {
+            const now = new Date();
+            return now.getMinutes() < 30
+              ? now.setHours(now.getHours(), 30, 0, 0)
+              : now.setHours(now.getHours() + 1, 0, 0, 0);
+          })(),
+          backgroundColor: "#d6d2d2ff",
+          display: "background",
         },
       ],
       //Date click event
