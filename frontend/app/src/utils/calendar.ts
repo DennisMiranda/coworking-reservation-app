@@ -18,6 +18,10 @@ export function initCalendar(id: string) {
         center: "title",
         right: "dayGridMonth,timeGridWeek",
       },
+
+      // Fixed week count to display 4 or 5 weeks
+      fixedWeekCount: false,
+
       //Hour Configuration
       slotMinTime: "08:00:00",
       slotMaxTime: "20:00:00",

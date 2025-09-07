@@ -1,4 +1,5 @@
 ---
+import { Icon } from "astro-icon/components";
 import type { Product } from "../../models/product";
 const { product } = Astro.props as { product: Product };
 ---
@@ -14,30 +15,18 @@ const { product } = Astro.props as { product: Product };
   data-product-image={product.image}
   data-product-details={product.details.join("|")}
 >
-  <label for="date" class="text-sm font-semibold">Date</label>
-  <input
-    id="date"
-    name="date"
-    class="w-full mb-2 pb-2 border-b border-primary/80 text-primary italic"
-    required
-    readonly
-  />
-  <label for="time" class="text-sm font-semibold">Time</label>
   <div class="flex gap-4">
-    <input
-      id="time-start"
-      name="time-start"
-      class="w-full mb-2 pb-2 border-b border-primary/80 text-primary italic"
-      required
-      readonly
-    />
-    <input
-      id="time-end"
-      name="time-end"
-      class="w-full mb-2 pb-2 border-b border-primary/80 text-primary italic"
-      required
-      readonly
-    />
+    <Icon name="calendar" />
+    <p id="date" class="text-sm w-full mb-2 pb-2 text-primary/80 italic">
+      Date Reservation
+    </p>
+  </div>
+
+  <div class="flex gap-4">
+    <Icon name="time" />
+    <p id="time" class="text-sm w-full mb-2 pb-2 text-primary/80 italic">
+      Time Reservation
+    </p>
   </div>
 
   <label for="title" class="text-sm font-semibold">Reservation Title</label>
@@ -46,6 +35,7 @@ const { product } = Astro.props as { product: Product };
     name="title"
     class="w-full mb-2 pb-2 border-b border-primary/80 text-primary italic"
     placeholder="3Q Meeting"
+    minlength="3"
     required
   />
   <label for="name" class="text-sm font-semibold">Client name</label>
@@ -54,6 +44,7 @@ const { product } = Astro.props as { product: Product };
     name="name"
     class="w-full mb-2 pb-2 border-b border-primary/80 text-primary italic"
     placeholder="John Doe"
+    minlength="3"
     required
   />
   <label for="email" class="text-sm font-semibold">Email</label>
@@ -66,10 +57,13 @@ const { product } = Astro.props as { product: Product };
   />
   <label for="phone" class="text-sm font-semibold">Phone</label>
   <input
-    type="number"
+    type="text"
     name="phone"
     class="w-full mb-2 pb-2 border-b border-primary/80 text-primary italic"
-    placeholder="123-456-7890"
+    placeholder="123456789"
+    pattern="[0-9]{9}"
+    inputmode="numeric"
+    maxlength="9"
     required
   />
   <div class="flex justify-center w-full">
@@ -80,107 +74,125 @@ const { product } = Astro.props as { product: Product };
       Confirm
     </button>
   </div>
-</form>
 
-<script>
-  import { watchForSelectionDate } from "/src/utils/calendar.ts";
-  import { saveReservation } from "/src/services/reservations.ts";
-  import { sendEmail } from "/src/services/email.ts";
-  import type { EmailData } from "/src/models/email.ts";
-  const timeStart = document.getElementById("time-start") as HTMLInputElement;
-  const timeEnd = document.getElementById("time-end") as HTMLInputElement;
-  const day = document.getElementById("date") as HTMLInputElement;
-  const form = document.querySelector("form") as HTMLFormElement;
+  <script>
+    import { watchForSelectionDate } from "/src/utils/calendar.ts";
+    import { saveReservation } from "/src/services/reservations.ts";
+    import { sendEmail } from "/src/services/email.ts";
+    import type { EmailData } from "/src/models/email.ts";
+    import { reservationSchema } from "/src/models/reservation.ts";
+    import * as z from "zod";
+    const time = document.getElementById("time") as HTMLInputElement;
+    const day = document.getElementById("date") as HTMLInputElement;
+    const form = document.querySelector("form") as HTMLFormElement;
 
-  let startDate = "";
-  let endDate = "";
+    let startDate = "";
+    let endDate = "";
 
-  watchForSelectionDate((start, end) => {
-    startDate = start;
-    endDate = end;
-    if (timeStart && timeEnd && day) {
-      timeStart.value = new Date(start).toLocaleTimeString("es-ES", {
-        hour: "2-digit",
-        minute: "2-digit",
-      });
-      timeEnd.value = new Date(end).toLocaleTimeString("es-ES", {
-        hour: "2-digit",
-        minute: "2-digit",
-      });
-      day.value = new Date(start).toLocaleDateString("es-ES", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-      });
-    }
-  });
-
-  if (form) {
-    const {
-      productId,
-      productTitle,
-      productAddress,
-      productCapacity,
-      productPrice,
-      productImage,
-      productDetails,
-    } = form.dataset;
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const formData = new FormData(form);
-      const client = {
-        name: formData.get("name") as string,
-        email: formData.get("email") as string,
-        phone: Number(formData.get("phone")),
-      };
-
-      const reservation = {
-        client,
-        title: formData.get("title") as string,
-        start: startDate,
-        end: endDate,
-        userId: "1",
-        productId: form.dataset.productId as string,
-      };
-
-      const { success, message, data } = await saveReservation(reservation);
-
-      if (success && data) {
-        const _startDate = new Date(startDate);
-        const _endDate = new Date(endDate);
-
-        const totalTime = _endDate.getTime() - _startDate.getTime();
-        const totalHours = Math.ceil(totalTime / (1000 * 60 * 60));
-
-        const totalAmount = totalHours * +(productPrice || 0);
-        const totalAmountText = `$${totalAmount.toFixed(2)}`;
-
-        const emailData: EmailData = {
-          email: client.email,
-          order_id: data.id,
-          orders: [
-            {
-              image_url: productImage || "",
-              capacity: `${productCapacity}`,
-              reserved_by: client.name,
-              reservation_date: day.value,
-              reservation_time: `${timeStart.value} - ${timeEnd.value}`,
-              price_per_hour: `$${productPrice || "0.00"}`,
-              details: productDetails?.split("|") || [],
-              total_price: totalAmountText,
-            },
-          ],
-          cost: {
-            total: totalAmountText,
-          },
-        };
-        console.log(emailData);
-
-        sendEmail(emailData);
-
-        alert(message);
-        form.reset();
+    watchForSelectionDate((start, end) => {
+      startDate = start;
+      endDate = end;
+      if (time && day) {
+        const timeStart = new Date(start).toLocaleTimeString("es-ES", {
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: true,
+        });
+        const timeEnd = new Date(end).toLocaleTimeString("es-ES", {
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: true,
+        });
+        time.textContent = `${timeStart} - ${timeEnd}`;
+        day.textContent = new Date(start).toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+        });
       }
     });
-  }
-</script>
+
+    if (form) {
+      const {
+        productId,
+        productTitle,
+        productAddress,
+        productCapacity,
+        productPrice,
+        productImage,
+        productDetails,
+      } = form.dataset;
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const formData = new FormData(form);
+        const client = {
+          name: formData.get("name") as string,
+          email: formData.get("email") as string,
+          phone: formData.get("phone") as string,
+        };
+
+        const reservation = {
+          client,
+          title: formData.get("title") as string,
+          start: startDate,
+          end: endDate,
+          userId: "1",
+          productId: form.dataset.productId as string,
+        };
+
+        const validation = reservationSchema.safeParse(reservation);
+
+        if (!validation.success) {
+          const { fieldErrors } = z.flattenError(validation.error);
+
+          if (fieldErrors.start) {
+            alert("Please select a valid date and time.");
+          }
+
+          return;
+        }
+
+        const { success, message, data } = await saveReservation(reservation);
+
+        if (success && data) {
+          const _startDate = new Date(startDate);
+          const _endDate = new Date(endDate);
+
+          const totalTime = _endDate.getTime() - _startDate.getTime();
+          const totalHours = Math.ceil(totalTime / (1000 * 60 * 60));
+
+          const totalAmount = totalHours * +(productPrice || 0);
+          const totalAmountText = `$${totalAmount.toFixed(2)}`;
+
+          const emailData: EmailData = {
+            email: client.email,
+            order_id: data.id,
+            orders: [
+              {
+                image_url: productImage || "",
+                room_name: productTitle || "",
+                location: productAddress || "",
+                capacity: `${productCapacity}`,
+                reserved_by: client.name,
+                reservation_date: day.textContent || "",
+                reservation_time: time.textContent || "",
+                price_per_hour: `$${productPrice || "0.00"}`,
+                details: productDetails?.split("|") || [],
+                total_price: totalAmountText,
+              },
+            ],
+            cost: {
+              total: totalAmountText,
+            },
+          };
+          console.log(emailData);
+
+          sendEmail(emailData);
+
+          alert(message);
+          form.reset();
+        }
+      });
+    }
+  </script>
+</form>
