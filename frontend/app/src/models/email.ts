@@ -10,6 +10,8 @@ export interface EmailData {
 
 interface Order {
   image_url: string;
+  room_name: string;
+  location: string;
   capacity: string;
   reserved_by: string;
   reservation_date: string;
