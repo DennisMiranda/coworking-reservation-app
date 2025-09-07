@@ -80,8 +80,14 @@ const { product } = Astro.props as { product: Product };
     import { saveReservation } from "/src/services/reservations.ts";
     import { sendEmail } from "/src/services/email.ts";
     import type { EmailData } from "/src/models/email.ts";
-    import { reservationSchema } from "/src/models/reservation.ts";
+    import {
+      reservationSchema,
+      type Reservation,
+    } from "/src/models/reservation.ts";
     import * as z from "zod";
+    import * as dialog from "/src/utils/dialog.ts";
+
+    const dialogId = "confirmation-dialog";
     const time = document.getElementById("time") as HTMLInputElement;
     const day = document.getElementById("date") as HTMLInputElement;
     const form = document.querySelector("form") as HTMLFormElement;
@@ -122,16 +128,20 @@ const { product } = Astro.props as { product: Product };
         productImage,
         productDetails,
       } = form.dataset;
+
+      let reservation: Reservation;
+      let client: Reservation["client"];
+
       form.addEventListener("submit", async (e) => {
         e.preventDefault();
         const formData = new FormData(form);
-        const client = {
+        client = {
           name: formData.get("name") as string,
           email: formData.get("email") as string,
           phone: formData.get("phone") as string,
         };
 
-        const reservation = {
+        reservation = {
           client,
           title: formData.get("title") as string,
           start: startDate,
@@ -149,6 +159,22 @@ const { product } = Astro.props as { product: Product };
             alert("Please select a valid date and time.");
           }
 
+          return;
+        }
+
+        dialog.open(
+          dialogId,
+          ` Are you sure you want to reserve ${productTitle}?`
+        );
+      });
+
+      dialog.cancel(dialogId);
+      dialog.confirm(dialogId, saveReservationAction, "Saving reservation...");
+
+      async function saveReservationAction() {
+        console.log(reservation);
+
+        if (!reservation) {
           return;
         }
 
@@ -192,7 +218,7 @@ const { product } = Astro.props as { product: Product };
           alert(message);
           form.reset();
         }
-      });
+      }
     }
   </script>
 </form>

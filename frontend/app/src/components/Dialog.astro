@@ -1,0 +1,37 @@
+---
+import { Icon } from "astro-icon/components";
+const { id, message } = Astro.props;
+---
+
+<!-- Simple pop-up dialog box, containing a form -->
+<dialog
+  id={id}
+  class="rounded-xl absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white shadow-lg max-w-[350px] min-w-[250px]"
+>
+  <form method="dialog" class="m-2">
+    <section class="mt-2 pt-2">
+      <p id={`${id}-message`} class="text-center">{message}</p>
+    </section>
+    <menu class="flex justify-center gap-4 p-2 m-1">
+      <button
+        type="button"
+        id={`${id}-cancel`}
+        class="rounded-full p-2 border border-primary hover:bg-primary/20 flex-1"
+        >Cancel</button
+      >
+      <button
+        type="button"
+        id={`${id}-confirm`}
+        class="rounded-full p-2 bg-primary text-white hover:bg-primary/90 flex-1"
+        >Confirm</button
+      >
+    </menu>
+  </form>
+  <div
+    id=`${id}-loading-container`
+    class="flex flex-col items-center gap-2 p-2 hidden"
+  >
+    <Icon name="loading" size="56" />
+    <p id={`${id}-loading-message`} class="text-center">Loading...</p>
+  </div>
+</dialog>
