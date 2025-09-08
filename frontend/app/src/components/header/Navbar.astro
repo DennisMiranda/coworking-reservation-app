@@ -7,19 +7,61 @@ const user = userState?.data;
 ---
 
 <header
-  class="flex justify-between bg-primary/45 text-white backdrop-blur fixed top-0 left-0 right-0 z-10 px-4 py-2"
+  class="flex-col bg-primary/45 text-white backdrop-blur fixed top-0 left-0 right-0 z-10 px-6 py-6 font-semibold"
 >
-  <!-- Logo  -->
-  <div class="logo">
-    <a href="/">WS</a>
+  <div class="flex justify-between items-center">
+    <div class="logo">
+      <a href="/">WS</a>
+    </div>
+
+    <!-- Boton Hamburguesa (mobile) -->
+    <button
+      id="menu-btn"
+      class="md:hidden flex items-center px-3 py-2 border rounded text-white border-white"
+      aria-label="Open menu"
+    >
+      <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M4 6h16M4 12h16M4 18h16" />
+      </svg>
+    </button>
+
+    <!-- Navbar (desktop) -->
+    <nav aria-label="Navbar" class="hidden md:block">
+      <ul class="flex gap-8">
+        <li><a href="/" class="hover:text-black transition">Home</a></li>
+        <li><a href="#product-list" class="hover:text-black transition">Spaces</a></li>
+        <li><a href="/contact" class="hover:text-black transition">Contact Us</a></li>
+        <div>
+          {
+            user ? (
+              <>
+                <li>
+                  <a href="/profile">Profile</a>
+                  <span>Hi, {user.email}</span>
+                </li>
+                <li>
+                  <button id="logout-btn">
+                    <a href="/logout">Logout</a>
+                  </button>
+                </li>
+              </>
+            ) : (
+              <li>
+                <a href="/login">Login/Register</a>
+              </li>
+            )
+          }
+        </div>
+      </ul>
+    </nav>
   </div>
 
-  <!-- Navbar -->
-  <nav aria-label="Navbar">
-    <ul class="flex gap-4">
-      <li><a href="/">Home</a></li>
-      <li><a href="/services">Spaces</a></li>
-      <li><a href="/contact">Contact Us</a></li>
+  <nav id="mobile-menu" class="md:hidden hidden mt-4">
+    <ul class="flex flex-col gap-4">
+      <li><a href="/" class="hover:text-black transition">Home</a></li>
+      <li><a href="#product-list" class="hover:text-black transition">Spaces</a></li>
+      <li><a href="/contact" class="hover:text-black transition">Contact Us</a></li>
       <div>
         {
           user ? (
@@ -29,7 +71,7 @@ const user = userState?.data;
                 <span>Hi, {user.email}</span>
               </li>
               <li>
-                <button id="logout-btn">
+                <button id="logout-btn-mobile">
                   <a href="/logout">Logout</a>
                 </button>
               </li>
@@ -43,16 +85,29 @@ const user = userState?.data;
       </div>
     </ul>
   </nav>
+  <div class="bg-white w-full h-[2px] mt-2"></div>
 </header>
 
 <script>
   import { logOut } from "../../services/auth";
 
   const logoutBtn = document.getElementById("logout-btn");
-
-  logoutBtn?.addEventListener("click", async () => {
+  logoutBtn?.addEventListener("click", async (e) => {
+    e.preventDefault();
     await logOut();
     window.location.href = "/login";
-    //$user.set({ data: null });
+  });
+
+  const logoutBtnMobile = document.getElementById("logout-btn-mobile");
+  logoutBtnMobile?.addEventListener("click", async (e) => {
+    e.preventDefault();
+    await logOut();
+    window.location.href = "/login";
+  });
+
+  const menuBtn = document.getElementById("menu-btn");
+  const mobileMenu = document.getElementById("mobile-menu");
+  menuBtn?.addEventListener("click", () => {
+    mobileMenu.classList.toggle("hidden");
   });
 </script>
