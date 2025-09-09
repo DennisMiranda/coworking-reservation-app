@@ -1,6 +1,5 @@
 ---
 import { $user } from "../../stores/userStore";
-import { logOut } from "../../services/auth";
 
 const userState = $user.get();
 const user = userState?.data;
@@ -46,7 +45,7 @@ const user = userState?.data;
 </header>
 
 <script>
-  import { logOut } from "../../services/auth";
+  import { logOut } from "/src/services/auth/auth.client";
 
   const logoutBtn = document.getElementById("logout-btn");
 
