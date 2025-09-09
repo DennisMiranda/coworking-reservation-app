@@ -172,8 +172,6 @@ const { product } = Astro.props as { product: Product };
       dialog.confirm(dialogId, saveReservationAction, "Saving reservation...");
 
       async function saveReservationAction() {
-        console.log(reservation);
-
         if (!reservation) {
           return;
         }
@@ -211,7 +209,6 @@ const { product } = Astro.props as { product: Product };
               total: totalAmountText,
             },
           };
-          console.log(emailData);
 
           sendEmail(emailData);
 

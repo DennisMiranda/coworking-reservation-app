@@ -1,7 +1,7 @@
 ---
-import WelcomeMessage from "../components/auth/WelcomeMessage.astro";
-import Login from "../components/auth/Login.astro";
-import LayoutLogin from "../layouts/LayoutLogin.astro";
+import WelcomeMessage from "/src/components/auth/WelcomeMessage.astro";
+import LoginComponent from "/src/components/auth/Login.astro";
+import LayoutLogin from "/src/layouts/LayoutLogin.astro";
 ---
 
 <div>
@@ -18,7 +18,7 @@ import LayoutLogin from "../layouts/LayoutLogin.astro";
         </div>
 
         <!-- Login Form -->
-        <div class="flex-1"><Login /></div>
+        <div class="flex-1"><LoginComponent /></div>
       </div>
     </div>
   </LayoutLogin>

@@ -52,7 +52,11 @@ justify-center">
 </div>
 
 <script>
-  import { signInWithGoogle, signInWithEmail } from "/src/services/auth";
+  import {
+    signInWithGoogle,
+    signInWithEmail,
+    getSessionCookies,
+  } from "/src/services/auth/auth.client";
 
   const form = document.querySelector("form");
   const errorMessage = document.getElementById(
@@ -86,10 +90,15 @@ justify-center">
       btnSignInGoogle.disabled = true;
       btnSignInEmail.textContent = "Signing in...";
 
-      const { success, message } = await signInWithEmail(email, password);
+      const { success, message, data } = await signInWithEmail(email, password);
 
       if (success) {
-        window.location.href = "/";
+        const response = await getSessionCookies(data?.token || "");
+        if (response.redirected) {
+          window.location.assign(response.url);
+        } else {
+          errorMessage.textContent = "Error signing in";
+        }
       } else {
         errorMessage.textContent = message;
       }
