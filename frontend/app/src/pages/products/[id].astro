@@ -1,20 +1,15 @@
 ---
-export const prerender = true;
+export const prerender = false;
 import Layout from "../../layouts/Layout.astro";
 
-import { getAllProducts } from "/src/services/products";
+import { getProductById } from "/src/services/products";
 import ProductDetail from "/src/components/products/ProductDetail.astro";
 import ReservationForm from "/src/components/reservation/ReservationForm.astro";
-export async function getStaticPaths() {
-  const products = await getAllProducts();
-
-  return products.map((product) => ({
-    params: { id: product.id },
-    props: { product },
-  }));
+const { id } = Astro.params;
+const product = await getProductById(id || "");
+if (!product) {
+  return Astro.redirect("/404");
 }
-
-const { product } = Astro.props;
 ---
 
 <Layout>
