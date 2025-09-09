@@ -6,14 +6,14 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import { db } from "./firebase";
+import { db } from "/src/services/firebase/firebase.client";
 import type { Reservation } from "../models/reservation";
 
 // save reservation on firestore
 export const saveReservation = async (reservation: Reservation) => {
   try {
     const { client, title, start, end, userId, productId } = reservation;
-    const docRef = doc(collection(db, "reservations"));
+    const docRef = doc(collection(db, "users/" + userId + "/reservations"));
     await setDoc(docRef, {
       client_name: client.name,
       client_email: client.email,
@@ -24,7 +24,11 @@ export const saveReservation = async (reservation: Reservation) => {
       user_id: userId,
       product_id: productId,
     });
-    return { success: true, message: "Reservation saved successfully", data: { id: docRef.id } };
+    return {
+      success: true,
+      message: "Reservation saved successfully",
+      data: { id: docRef.id },
+    };
   } catch (error) {
     console.error("Error saving reservation: ", error);
     return { success: false, message: "Error saving reservation" };

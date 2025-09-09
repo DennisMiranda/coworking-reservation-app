@@ -10,18 +10,28 @@ import {
 
 import { doc, setDoc } from "firebase/firestore";
 
-import { auth, db } from "./firebase";
+import { auth, db } from "/src/services/firebase/firebase.client";
 
 //Import UserCredential interface
-import { type UserCredential } from "../models/user";
+import { type UserCredential } from "/src/models/user";
 
 //Intsance of object to manage credentials
 const googleAuthProvider = new GoogleAuthProvider();
 
+export const getSessionCookies = async (idToken: string) => {
+  return fetch("/api/auth/signin", {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${idToken}`,
+    },
+  });
+};
+
 export const signInWithGoogle = async () => {
   try {
-    const result = await signInWithPopup(auth, googleAuthProvider);
-    const saveUser = result.user;
+    const userCredential = await signInWithPopup(auth, googleAuthProvider);
+    const saveUser = userCredential.user;
+    const token = await saveUser.getIdToken();
     await setDoc(
       doc(db, "users", saveUser.uid),
       {
@@ -36,9 +46,17 @@ export const signInWithGoogle = async () => {
       },
       { merge: true }
     );
-    return { success: true, message: "Success" };
+    return {
+      success: true,
+      message: "Success",
+      data: { user: saveUser, token },
+    };
   } catch (error) {
-    const result = { success: false, message: "Error signing in with Google" };
+    const result = {
+      success: false,
+      message: "Error signing in with Google",
+      data: null,
+    };
     console.error("Error signing in with Google", error);
     if (error instanceof Error) {
       const errorMessage = error.toString();
@@ -65,6 +83,7 @@ export const signUpWithEmail = async (
       pass
     );
     const user = userCredential.user;
+    const token = await user.getIdToken();
 
     await setDoc(doc(db, "users", user.uid), {
       name,
@@ -76,7 +95,7 @@ export const signUpWithEmail = async (
       role,
       provider: "email",
     });
-    return { success: true, message: "Success", data: user };
+    return { success: true, message: "Success", data: { user, token } };
   } catch (error) {
     console.error("Error signing up: ", error);
     return { success: false, message: "Error signing up", data: null };
@@ -88,7 +107,8 @@ export const signInWithEmail = async (email: string, pass: string) => {
   try {
     const userCredential = await signInWithEmailAndPassword(auth, email, pass);
     const user = userCredential.user;
-    return { success: true, message: "Success", data: user };
+    const token = await user.getIdToken();
+    return { success: true, message: "Success", data: { user, token } };
   } catch (error: unknown) {
     const result = { success: false, message: "Error signing in", data: null };
     console.error("Error signing in: ", error);
