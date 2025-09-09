@@ -9,4 +9,5 @@ export default defineConfig({
     plugins: [tailwindcss()],
   },
   integrations: [astroIcon()],
+  output: "server",
 });
