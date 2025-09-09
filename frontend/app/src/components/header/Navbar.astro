@@ -1,18 +1,16 @@
 ---
-const isAuthenticated = Astro.cookies.has("__session");
-
 const user = Astro.locals.user;
 ---
 
 <header
-  class="flex-col bg-primary/45 text-white backdrop-blur fixed top-0 left-0 right-0 z-10 px-6 py-6 font-semibold"
+  class="flex-col bg-primary/45 text-white backdrop-blur fixed top-0 left-0 right-0 z-10 px-6 py-3 font-semibold"
 >
   <div class="flex justify-between items-center">
     <div class="logo">
       <a href="/">WS</a>
     </div>
 
-    <!-- Boton Hamburguesa (mobile) -->
+    <!-- Btn mobile -->
     <button
       id="menu-btn"
       class="md:hidden flex items-center px-3 py-2 border rounded text-white border-white"
@@ -43,27 +41,22 @@ const user = Astro.locals.user;
           <a href="/contact" class="hover:text-primary transition">Contact Us</a
           >
         </li>
-        <div>
-          {
-            user ? (
-              <>
-                <li>
-                  <a href="/profile">Profile</a>
-                  <span>Hi, {user.email}</span>
-                </li>
-                <li>
-                  <button id="logout-btn">
-                    <a href="/logout">Logout</a>
-                  </button>
-                </li>
-              </>
-            ) : (
+        {
+          user ? (
+            <>
               <li>
-                <a href="/login">Login/Register</a>
+                <a href="/profile">Hi, {user.name?.split(" ")[0]}</a>
               </li>
-            )
-          }
-        </div>
+              <li>
+                <button id="logout-btn">Logout</button>
+              </li>
+            </>
+          ) : (
+            <li>
+              <a href="/login">Login/Register</a>
+            </li>
+          )
+        }
       </ul>
     </nav>
     <nav id="mobile-menu" class="md:hidden hidden mt-4">
@@ -78,53 +71,44 @@ const user = Astro.locals.user;
           <a href="/contact" class="hover:text-primary transition">Contact Us</a
           >
         </li>
-        <div>
-          {
-            user ? (
-              <>
-                <li>
-                  <a href="/profile">Profile</a>
-                  <span>Hi, {user.email}</span>
-                </li>
-                <li>
-                  <button id="logout-btn">
-                    <a href="/logout">Logout</a>
-                  </button>
-                </li>
-              </>
-            ) : (
+        {
+          user ? (
+            <>
               <li>
-                <a href="/login">Login/Register</a>
+                <a href="/profile">Hi, {user.name?.split(" ")[0]}</a>
               </li>
-            )
-          }
-        </div>
+              <li>
+                <button id="logout-btn-mobile">Logout</button>
+              </li>
+            </>
+          ) : (
+            <li>
+              <a href="/login">Login/Register</a>
+            </li>
+          )
+        }
       </ul>
     </nav>
   </div>
-
-  <script>
-    import { logOut } from "/src/services/auth/auth.client";
-    import { $user } from "/src/stores/userStore";
-
-    const logoutBtn = document.getElementById("logout-btn");
-    logoutBtn?.addEventListener("click", async (e) => {
-      e.preventDefault();
-      await logOut();
-      window.location.href = "/login";
-    });
-
-    const logoutBtnMobile = document.getElementById("logout-btn-mobile");
-    logoutBtnMobile?.addEventListener("click", async (e) => {
-      e.preventDefault();
-      await logOut();
-      window.location.href = "/login";
-      //$user.set({ data: null });
-
-      const menu = document.getElementById("menu-btn");
-      const mobileMenu = document.getElementById("mobile-menu");
-      menu?.classList.remove("hidden");
-      mobileMenu?.classList.add("hidden");
-    });
-  </script>
 </header>
+
+<script>
+  import { logOut } from "/src/services/auth/auth.client";
+
+  const logoutBtn = document.getElementById("logout-btn");
+  logoutBtn?.addEventListener("click", async (e) => {
+    e.preventDefault();
+    await logOut();
+  });
+
+  const logoutBtnMobile = document.getElementById("logout-btn-mobile");
+  logoutBtnMobile?.addEventListener("click", async (e) => {
+    e.preventDefault();
+    await logOut();
+
+    const menu = document.getElementById("menu-btn");
+    const mobileMenu = document.getElementById("mobile-menu");
+    menu?.classList.remove("hidden");
+    mobileMenu?.classList.add("hidden");
+  });
+</script>

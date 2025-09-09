@@ -142,6 +142,7 @@ export const logOut = async () => {
     await signOut(auth);
     await removeSessionCookies();
     $user.set({ isLoading: false, data: null });
+    window.location.replace("/login");
 
     return { success: true, message: "Success" };
   } catch (error) {
