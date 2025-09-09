@@ -52,6 +52,7 @@ justify-center">
 </div>
 
 <script>
+  import type { User } from "firebase/auth";
   import {
     signInWithGoogle,
     signInWithEmail,
@@ -90,18 +91,9 @@ justify-center">
       btnSignInGoogle.disabled = true;
       btnSignInEmail.textContent = "Signing in...";
 
-      const { success, message, data } = await signInWithEmail(email, password);
+      const response = await signInWithEmail(email, password);
 
-      if (success) {
-        const response = await getSessionCookies(data?.token || "");
-        if (response.redirected) {
-          window.location.assign(response.url);
-        } else {
-          errorMessage.textContent = "Error signing in";
-        }
-      } else {
-        errorMessage.textContent = message;
-      }
+      handleSignInResponse(response);
       //Enable button
       btnSignInEmail.disabled = false;
       btnSignInGoogle.disabled = false;
@@ -119,16 +111,28 @@ justify-center">
       googleMessage.textContent = "Signing in...";
 
       //Result and redirect
-      const { success, message } = await signInWithGoogle();
-      if (success) {
-        window.location.href = "/";
-      } else {
-        errorMessage.textContent = message;
-      }
+      const response = await signInWithGoogle();
+      handleSignInResponse(response);
       //Enable button
       btnSignInGoogle.disabled = false;
       btnSignInEmail.disabled = false;
       googleMessage.textContent = "Google";
     });
   }
+
+  const handleSignInResponse = async (response: {
+    success: boolean;
+    message: string;
+    data?: { user: User; token: string } | null;
+  }) => {
+    const { success, message, data } = response;
+    if (success && data) {
+      const response = await getSessionCookies(data.token);
+      if (response.redirected) {
+        window.location.assign(response.url);
+      }
+    } else {
+      errorMessage.textContent = message;
+    }
+  };
 </script>

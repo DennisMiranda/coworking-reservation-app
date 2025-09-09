@@ -12,6 +12,8 @@ import { doc, setDoc } from "firebase/firestore";
 
 import { auth, db } from "/src/services/firebase/firebase.client";
 
+import { $user } from "/src/stores/userStore";
+
 //Import UserCredential interface
 import { type UserCredential } from "/src/models/user";
 
@@ -27,10 +29,18 @@ export const getSessionCookies = async (idToken: string) => {
   });
 };
 
+export const removeSessionCookies = async () => {
+  return fetch("/api/auth/signout", {
+    method: "GET",
+  });
+};
+
 export const signInWithGoogle = async () => {
   try {
     const userCredential = await signInWithPopup(auth, googleAuthProvider);
     const saveUser = userCredential.user;
+    $user.set({ isLoading: false, data: saveUser });
+
     const token = await saveUser.getIdToken();
     await setDoc(
       doc(db, "users", saveUser.uid),
@@ -83,6 +93,8 @@ export const signUpWithEmail = async (
       pass
     );
     const user = userCredential.user;
+    $user.set({ isLoading: false, data: user });
+
     const token = await user.getIdToken();
 
     await setDoc(doc(db, "users", user.uid), {
@@ -107,6 +119,8 @@ export const signInWithEmail = async (email: string, pass: string) => {
   try {
     const userCredential = await signInWithEmailAndPassword(auth, email, pass);
     const user = userCredential.user;
+    $user.set({ isLoading: false, data: user });
+
     const token = await user.getIdToken();
     return { success: true, message: "Success", data: { user, token } };
   } catch (error: unknown) {
@@ -126,6 +140,9 @@ export const signInWithEmail = async (email: string, pass: string) => {
 export const logOut = async () => {
   try {
     await signOut(auth);
+    await removeSessionCookies();
+    $user.set({ isLoading: false, data: null });
+
     return { success: true, message: "Success" };
   } catch (error) {
     console.error("Error signing out: ", error);
