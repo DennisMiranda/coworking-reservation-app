@@ -1,5 +1,5 @@
 //Conect to Firestore
-import { db } from "./firebase";
+import { db } from "/src/services/firebase/firebase.client";
 import { getDocs, collection, getDoc, doc } from "firebase/firestore";
 
 //Get all products

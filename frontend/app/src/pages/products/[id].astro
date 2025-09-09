@@ -1,22 +1,19 @@
 ---
+export const prerender = false;
 import Layout from "../../layouts/Layout.astro";
 
-import { getAllProducts } from "../../services/products";
-import ProductDetail from "../../components/products/ProductDetail.astro";
-import ReservationForm from "../../components/reservation/ReservationForm.astro";
-export async function getStaticPaths() {
-  const products = await getAllProducts();
-  return products.map((product) => ({
-    params: { id: product.id },
-    props: { product },
-  }));
+import { getProductById } from "/src/services/products";
+import ProductDetail from "/src/components/products/ProductDetail.astro";
+import ReservationForm from "/src/components/reservation/ReservationForm.astro";
+const { id } = Astro.params;
+const product = await getProductById(id || "");
+if (!product) {
+  return Astro.redirect("/404");
 }
-
-const { product } = Astro.props;
 ---
 
 <Layout>
-  <h2 class="text-2xl font-bold mt-4 pt-8 text-center">Booking your space</h2>
+  <h2 class="text-2xl font-bold mt-8 pt-8 text-center">Booking your space</h2>
   <!-- Details -->
   <ProductDetail product={product} />
   <!-- Reservation  -->

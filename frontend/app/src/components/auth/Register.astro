@@ -74,7 +74,12 @@ justify-center">
 </div>
 
 <script>
-  import { signUpWithEmail, signInWithGoogle } from "/src/services/auth";
+  import type { User } from "firebase/auth";
+  import {
+    signUpWithEmail,
+    signInWithGoogle,
+    getSessionCookies,
+  } from "/src/services/auth/auth.client";
   import { validatePassword } from "/src/utils/password";
 
   const form = document.querySelector("form") as HTMLFormElement;
@@ -96,36 +101,59 @@ justify-center">
     confirmPasswordError &&
     btnSignUpGoogle
   ) {
-
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const name = form.user_name.value;
-    const lastName = form.last_name.value;
-    const email = form.email.value;
-    const password = form.password.value;
-    const confirmPassword = form.confirm_password.value;
-    const { result } = validatePassword(password, confirmPassword);
-    if (result) {
-      await signUpWithEmail({ name, lastName, email, pass: password }, "user");
-    }
-  });
-
-    btnSignUpGoogle.addEventListener("click", async () => {
-      const result = await signInWithGoogle();
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const name = form.user_name.value;
+      const lastName = form.last_name.value;
+      const email = form.email.value;
+      const password = form.password.value;
+      const confirmPassword = form.confirm_password.value;
+      const { result } = validatePassword(password, confirmPassword);
       if (result) {
-        window.location.href = "/";
+        const response = await signUpWithEmail(
+          { name, lastName, email, pass: password },
+          "user"
+        );
+        handleSignInResponse(response);
       }
     });
 
-  //Validate password
+    btnSignUpGoogle.addEventListener("click", async () => {
+      const response = await signInWithGoogle();
+      handleSignInResponse(response);
+    });
+
+    //Validate password
 
     password.addEventListener("input", () => {
-      const { message } = validatePassword(password.value, confirmPassword.value);
+      const { message } = validatePassword(
+        password.value,
+        confirmPassword.value
+      );
       confirmPasswordError.textContent = message;
     });
     confirmPassword.addEventListener("input", () => {
-      const { message } = validatePassword(password.value, confirmPassword.value);
+      const { message } = validatePassword(
+        password.value,
+        confirmPassword.value
+      );
       confirmPasswordError.textContent = message;
     });
   }
+
+  const handleSignInResponse = async (response: {
+    success: boolean;
+    message: string;
+    data?: { user: User; token: string } | null;
+  }) => {
+    const { success, message, data } = response;
+    if (success && data) {
+      const response = await getSessionCookies(data.token);
+      if (response.redirected) {
+        window.location.assign(response.url);
+      }
+    } else {
+      confirmPasswordError.textContent = message;
+    }
+  };
 </script>

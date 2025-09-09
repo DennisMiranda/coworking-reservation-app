@@ -9,6 +9,7 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@astrojs/vercel": "^8.2.7",
     "@emailjs/browser": "^4.4.1",
     "@fullcalendar/core": "^6.1.19",
     "@fullcalendar/daygrid": "^6.1.19",
@@ -19,6 +20,7 @@
     "astro": "^5.13.3",
     "astro-icon": "^1.1.5",
     "firebase": "^12.1.0",
+    "firebase-admin": "^13.5.0",
     "nanostores": "^1.0.1",
     "tailwindcss": "^4.1.12",
     "zod": "^4.1.5"
