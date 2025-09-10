@@ -10,6 +10,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
     if (decodedToken) {
       context.locals.user = {
+        uid: decodedToken.uid,
         name: decodedToken.name,
         email: decodedToken.email || "",
         picture: decodedToken.picture || "",
