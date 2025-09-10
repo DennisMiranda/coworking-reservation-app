@@ -77,8 +77,27 @@ export function initCalendar(id: string) {
             ev.remove();
           }
         });
+
+        // Validate selection
+        const start = new Date(info.start).getTime();
+        const end = new Date(info.end).getTime();
+
+        const event = calendar.getEvents().some((ev) => {
+          if (!ev.start) return false;
+          const evStart = new Date(ev.start).getTime();
+
+          return evStart >= start && evStart <= end;
+        });
+
+        if (event) {
+          calendar.unselect();
+          alert("Date already selected");
+          return;
+        }
+
         //Add event weekly
         calendar.addEvent({
+          id: "selected",
           title: "Selected",
           start: info.start,
           end: info.end,
@@ -132,5 +151,19 @@ export function watchForSelectionDate(
     const customEvent = event as CustomEvent;
     const { start, end } = customEvent.detail;
     callback(start, end);
+  });
+}
+
+//Clean selection date
+export function dispatchClearSelectionDate() {
+  const event = new CustomEvent("clear-selected-date", {
+    detail: true,
+  });
+  document.dispatchEvent(event);
+}
+
+export function watchForClearSelectionDate(callback: () => void) {
+  document.addEventListener("clear-selected-date", () => {
+    callback();
   });
 }

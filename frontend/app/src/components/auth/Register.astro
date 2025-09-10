@@ -148,9 +148,19 @@ justify-center">
   }) => {
     const { success, message, data } = response;
     if (success && data) {
-      const response = await getSessionCookies(data.token);
-      if (response.redirected) {
-        window.location.assign(response.url);
+      const { uid, displayName, email } = data.user;
+      window.sessionStorage.setItem(
+        "user",
+        JSON.stringify({ uid, displayName, email })
+      );
+
+      const { status } = await getSessionCookies(data.token);
+      if (status === 200) {
+        const urlParams = new URLSearchParams(window.location.search);
+        window.location.assign(urlParams.get("redirect") || "/");
+      } else {
+        confirmPasswordError.textContent =
+          "Something went wrong. Please try again.";
       }
     } else {
       confirmPasswordError.textContent = message;

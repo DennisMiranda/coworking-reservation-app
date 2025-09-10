@@ -15,6 +15,7 @@ if (!product) {
 <Layout>
   <h2 class="text-2xl font-bold mt-8 pt-8 text-center">Booking your space</h2>
   <!-- Details -->
+  <div id="product-detail" class="hidden" data-product-id={product.id}></div>
   <ProductDetail product={product} />
   <!-- Reservation  -->
   <section class="max-w-6xl mx-auto p-6">
@@ -24,6 +25,7 @@ if (!product) {
       <div class="flex justify-center w-full md:h-150 h-130 md:col-span-2">
         <div id="calendar" class="bg-white w-full"></div>
       </div>
+
       <!-- Confirmation form -->
       <div class="flex flex-col backdrop-blur-sm rounded-lg md:col-span-1">
         <ReservationForm product={product} />
@@ -33,6 +35,40 @@ if (!product) {
 </Layout>
 
 <script>
-  import { initCalendar } from "/src/utils/calendar.ts";
-  initCalendar("calendar");
+  import {
+    initCalendar,
+    watchForClearSelectionDate,
+  } from "/src/utils/calendar.ts";
+  import { getReservationsByProductIdFromToday } from "/src/services/reservations";
+  import type { PublicReservation } from "/src/models/reservation";
+
+  const calendar = initCalendar("calendar");
+
+  watchForClearSelectionDate(() => {
+    calendar?.getEventById("selected")?.remove();
+  });
+
+  const user = JSON.parse(window.sessionStorage.getItem("user") || "{}");
+  const userId = user.uid;
+
+  const productDetail = document.getElementById("product-detail");
+  const productId = productDetail?.dataset.productId || "";
+
+  const addEventToCalendar = (reservation: PublicReservation) => {
+    calendar?.addEvent({
+      title: `Reserved`,
+      start: reservation.start,
+      end: reservation.end,
+      color: reservation.userId === userId ? "blue" : "#24211e",
+    });
+  };
+
+  const { success } = await getReservationsByProductIdFromToday(
+    productId,
+    addEventToCalendar
+  );
+
+  if (!success) {
+    alert("Error getting reservations");
+  }
 </script>
