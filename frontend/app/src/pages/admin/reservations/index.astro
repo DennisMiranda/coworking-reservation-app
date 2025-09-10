@@ -1,0 +1,105 @@
+---
+import LayoutAdmin from "../../../layouts/LayoutAdmin.astro";
+import ReservationTable from "../../../components/admin/ReservationTable.astro";
+---
+
+<LayoutAdmin title="Reservations Management - Admin">
+  <div class="px-4 py-6 sm:px-0">
+    <!-- Page Header -->
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-900">Reservations Management</h1>
+      <p class="mt-2 text-gray-600">View and manage all reservations</p>
+    </div>
+
+    <!-- Filters and Search -->
+    <div class="mb-6 bg-white shadow rounded-lg p-6">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Search</label>
+          <input 
+            type="text" 
+            placeholder="Search by client name, room..."
+            class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
+          />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
+          <select class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm">
+            <option value="">All Status</option>
+            <option value="active">Active</option>
+            <option value="pending">Pending</option>
+            <option value="cancelled">Cancelled</option>
+            <option value="completed">Completed</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Date From</label>
+          <input 
+            type="date" 
+            class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
+          />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Date To</label>
+          <input 
+            type="date" 
+            class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
+          />
+        </div>
+      </div>
+      <div class="mt-4 flex space-x-3">
+        <button class="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary/80">
+          Apply Filters
+        </button>
+        <button class="bg-gray-200 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-300">
+          Clear Filters
+        </button>
+        <button class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700">
+          Export CSV
+        </button>
+      </div>
+    </div>
+
+    <!-- Reservations Table -->
+    <ReservationTable />
+
+    <!-- Pagination -->
+    <div class="mt-6 flex items-center justify-between bg-white px-4 py-3 sm:px-6 rounded-lg shadow">
+      <div class="flex flex-1 justify-between sm:hidden">
+        <button class="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">
+          Previous
+        </button>
+        <button class="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50">
+          Next
+        </button>
+      </div>
+      <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+        <div>
+          <p class="text-sm text-gray-700">
+            Showing <span class="font-medium">1</span> to <span class="font-medium">10</span> of{' '}
+            <span class="font-medium">97</span> results
+          </p>
+        </div>
+        <div>
+          <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+            <button class="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+              Previous
+            </button>
+            <button class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+              1
+            </button>
+            <button class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+              2
+            </button>
+            <button class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+              3
+            </button>
+            <button class="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+              Next
+            </button>
+          </nav>
+        </div>
+      </div>
+    </div>
+  </div>
+</LayoutAdmin>
