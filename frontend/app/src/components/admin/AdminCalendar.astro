@@ -1,0 +1,144 @@
+---
+// Componente del calendario administrativo usando el calendario existente
+---
+
+<div class="bg-white shadow rounded-lg p-6">
+  <div class="flex justify-between items-center mb-4">
+    <h3 class="text-lg font-medium text-gray-900">Choose your date</h3>
+    <div class="flex space-x-2">
+      <button class="px-3 py-1 text-sm bg-gray-800 text-white rounded view-toggle active" data-view="month">
+        month
+      </button>
+      <button class="px-3 py-1 text-sm bg-gray-200 text-gray-700 rounded view-toggle" data-view="week">
+        week
+      </button>
+    </div>
+  </div>
+
+  <!-- Contenedor del calendario -->
+  <div id="admin-calendar" class="w-full min-h-[400px]"></div>
+</div>
+
+<script>
+  import { initCalendar, watchForSelectionDate } from "/src/utils/calendar.ts";
+
+  document.addEventListener('DOMContentLoaded', () => {
+    // Inicializar el calendario usando el sistema existente
+    const calendar = initCalendar("admin-calendar");
+    
+    if (calendar) {
+      // Configuración específica para admin
+      calendar.setOption('selectable', true);
+      calendar.setOption('selectMirror', true);
+      
+      // Remover restricciones de fechas pasadas para admin
+      calendar.setOption('selectAllow', () => true);
+      calendar.setOption('dayCellClassNames', () => []);
+      
+      // Agregar eventos de ejemplo para admin (reservas existentes)
+      calendar.addEvent({
+        title: 'Meeting Room 101 - Reserved',
+        start: '2025-09-15T09:00:00',
+        end: '2025-09-15T11:00:00',
+        backgroundColor: '#ef4444',
+        borderColor: '#dc2626',
+        extendedProps: { isReservation: true, roomId: '101' }
+      });
+      
+      calendar.addEvent({
+        title: 'Meeting Room 102 - Reserved', 
+        start: '2025-09-16T14:00:00',
+        end: '2025-09-16T16:00:00',
+        backgroundColor: '#ef4444',
+        borderColor: '#dc2626',
+        extendedProps: { isReservation: true, roomId: '102' }
+      });
+
+      // Manejar click en eventos (reservas existentes)
+      calendar.setOption('eventClick', (info) => {
+        const event = info.event;
+        const isReservation = event.extendedProps.isReservation;
+        
+        if (isReservation) {
+          // Mostrar detalles de la reserva
+          window.dispatchEvent(new CustomEvent('show-reservation-detail', {
+            detail: {
+              title: event.title,
+              start: event.start?.toISOString(),
+              end: event.end?.toISOString(),
+              roomId: event.extendedProps.roomId
+            }
+          }));
+        } else if (event.title === 'BLOCKED') {
+          // Permitir desbloquear fecha
+          const unblock = confirm(`Unblock this date?`);
+          if (unblock) {
+            event.remove();
+          }
+        }
+      });
+
+      // Manejar selección para bloquear fechas
+      calendar.setOption('select', (info) => {
+        const blockDate = confirm(`Block date from ${info.startStr} to ${info.endStr}?`);
+        if (blockDate) {
+          calendar.addEvent({
+            title: 'BLOCKED',
+            start: info.start,
+            end: info.end,
+            backgroundColor: '#6b7280',
+            borderColor: '#4b5563',
+            extendedProps: { isBlocked: true }
+          });
+          
+          // Disparar evento para notificar el bloqueo
+          window.dispatchEvent(new CustomEvent('block-date', {
+            detail: { 
+              start: info.startStr, 
+              end: info.endStr 
+            }
+          }));
+        }
+        calendar.unselect();
+      });
+
+      // Escuchar selecciones de fecha para mostrar en panel de detalles
+      watchForSelectionDate((start, end) => {
+        window.dispatchEvent(new CustomEvent('show-reservation-detail', {
+          detail: {
+            start: start,
+            end: end,
+            title: 'New Reservation'
+          }
+        }));
+      });
+    }
+
+    // Manejar cambio de vista con los botones personalizados
+    const viewToggles = document.querySelectorAll('.view-toggle');
+    viewToggles.forEach(toggle => {
+      toggle.addEventListener('click', (e) => {
+        const target = e.target as HTMLButtonElement;
+        const view = target.dataset.view;
+        
+        // Actualizar botones activos
+        viewToggles.forEach(btn => {
+          btn.classList.remove('bg-gray-800', 'text-white', 'active');
+          btn.classList.add('bg-gray-200', 'text-gray-700');
+        });
+        
+        target.classList.remove('bg-gray-200', 'text-gray-700');
+        target.classList.add('bg-gray-800', 'text-white', 'active');
+        
+        // Cambiar vista del calendario
+        if (calendar) {
+          if (view === 'month') {
+            calendar.changeView('dayGridMonth');
+          } else if (view === 'week') {
+            calendar.changeView('timeGridWeek');
+          }
+        }
+      });
+    });
+  });
+</script>
