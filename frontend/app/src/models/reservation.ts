@@ -14,6 +14,18 @@ export const reservationSchema = z.object({
   end: z.string().nonempty({ message: "End date is required" }),
   userId: z.string(),
   productId: z.string(),
+  status: z.enum(["active", "inactive"]),
 });
 
 export type Reservation = z.infer<typeof reservationSchema>;
+
+export const PublicReservationSchema = reservationSchema.pick({
+  id: true,
+  start: true,
+  end: true,
+  userId: true,
+  productId: true,
+  status: true,
+});
+
+export type PublicReservation = z.infer<typeof PublicReservationSchema>;

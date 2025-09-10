@@ -2,6 +2,8 @@
 import { Icon } from "astro-icon/components";
 import type { Product } from "../../models/product";
 const { product } = Astro.props as { product: Product };
+
+const user = Astro.locals.user;
 ---
 
 <p class="text-xl font-bold px-6 text-primary flex">Confirm your reservation</p>
@@ -67,155 +69,173 @@ const { product } = Astro.props as { product: Product };
     required
   />
   <div class="flex justify-center w-full">
-    <button
-      type="submit"
-      class="mt-6 bg-primary text-white w-full px-6 py-2 rounded-full hover:bg-primary/80 transition"
-    >
-      Confirm
-    </button>
+    {
+      user ? (
+        <button
+          type="submit"
+          class="mt-6 bg-primary text-white w-full px-6 py-2 rounded-full hover:bg-primary/80 transition"
+        >
+          Confirm
+        </button>
+      ) : (
+        <a
+          href={"/login?redirect=/products/" + product.id}
+          class="text-center mt-6 bg-primary text-white w-full px-6 py-2 rounded-full hover:bg-primary/80 transition"
+        >
+          Login to reserve
+        </a>
+      )
+    }
   </div>
+</form>
 
-  <script>
-    import { watchForSelectionDate } from "/src/utils/calendar.ts";
-    import { saveReservation } from "/src/services/reservations.ts";
-    import { sendEmail } from "/src/services/email.ts";
-    import type { EmailData } from "/src/models/email.ts";
-    import {
-      reservationSchema,
-      type Reservation,
-    } from "/src/models/reservation.ts";
-    import * as z from "zod";
-    import * as dialog from "/src/utils/dialog.ts";
+<script>
+  import {
+    watchForSelectionDate,
+    dispatchClearSelectionDate,
+  } from "/src/utils/calendar.ts";
+  import { saveReservation } from "/src/services/reservations.ts";
+  import { sendEmail } from "/src/services/email.ts";
+  import type { EmailData } from "/src/models/email.ts";
+  import {
+    reservationSchema,
+    type Reservation,
+  } from "/src/models/reservation.ts";
+  import * as z from "zod";
+  import * as dialog from "/src/utils/dialog.ts";
 
-    const dialogId = "confirmation-dialog";
-    const time = document.getElementById("time") as HTMLInputElement;
-    const day = document.getElementById("date") as HTMLInputElement;
-    const form = document.querySelector("form") as HTMLFormElement;
+  const dialogId = "confirmation-dialog";
+  const time = document.getElementById("time") as HTMLInputElement;
+  const day = document.getElementById("date") as HTMLInputElement;
+  const form = document.querySelector("form") as HTMLFormElement;
 
-    let startDate = "";
-    let endDate = "";
+  let startDate = "";
+  let endDate = "";
+  const user = JSON.parse(window.sessionStorage.getItem("user") || "{}");
+  const userId = user.uid;
 
-    watchForSelectionDate((start, end) => {
-      startDate = start;
-      endDate = end;
-      if (time && day) {
-        const timeStart = new Date(start).toLocaleTimeString("es-ES", {
-          hour: "2-digit",
-          minute: "2-digit",
-          hour12: true,
-        });
-        const timeEnd = new Date(end).toLocaleTimeString("es-ES", {
-          hour: "2-digit",
-          minute: "2-digit",
-          hour12: true,
-        });
-        time.textContent = `${timeStart} - ${timeEnd}`;
-        day.textContent = new Date(start).toLocaleDateString("en-US", {
-          month: "short",
-          day: "numeric",
-          year: "numeric",
-        });
+  watchForSelectionDate((start, end) => {
+    startDate = start;
+    endDate = end;
+    if (time && day) {
+      const timeStart = new Date(start).toLocaleTimeString("es-ES", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+      });
+      const timeEnd = new Date(end).toLocaleTimeString("es-ES", {
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+      });
+      time.textContent = `${timeStart} - ${timeEnd}`;
+      day.textContent = new Date(start).toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      });
+    }
+  });
+
+  if (form) {
+    const {
+      productId,
+      productTitle,
+      productAddress,
+      productCapacity,
+      productPrice,
+      productImage,
+      productDetails,
+    } = form.dataset;
+
+    let reservation: Reservation;
+    let client: Reservation["client"];
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const formData = new FormData(form);
+      client = {
+        name: formData.get("name") as string,
+        email: formData.get("email") as string,
+        phone: formData.get("phone") as string,
+      };
+
+      reservation = {
+        client,
+        title: formData.get("title") as string,
+        start: startDate,
+        end: endDate,
+        userId,
+        productId: form.dataset.productId as string,
+        status: "active",
+      };
+
+      const validation = reservationSchema.safeParse(reservation);
+
+      if (!validation.success) {
+        const { fieldErrors } = z.flattenError(validation.error);
+
+        if (fieldErrors.start) {
+          alert("Please select a valid date and time.");
+        }
+
+        return;
       }
+
+      dialog.open(
+        dialogId,
+        ` Are you sure you want to reserve ${productTitle}?`
+      );
     });
 
-    if (form) {
-      const {
-        productId,
-        productTitle,
-        productAddress,
-        productCapacity,
-        productPrice,
-        productImage,
-        productDetails,
-      } = form.dataset;
+    dialog.cancel(dialogId);
+    dialog.confirm(dialogId, saveReservationAction, "Saving reservation...");
 
-      let reservation: Reservation;
-      let client: Reservation["client"];
+    async function saveReservationAction() {
+      if (!reservation) {
+        return;
+      }
 
-      form.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        const formData = new FormData(form);
-        client = {
-          name: formData.get("name") as string,
-          email: formData.get("email") as string,
-          phone: formData.get("phone") as string,
-        };
+      const { success, message, data } = await saveReservation(reservation);
 
-        reservation = {
-          client,
-          title: formData.get("title") as string,
-          start: startDate,
-          end: endDate,
-          userId: "1",
-          productId: form.dataset.productId as string,
-        };
+      if (success && data) {
+        const _startDate = new Date(startDate);
+        const _endDate = new Date(endDate);
 
-        const validation = reservationSchema.safeParse(reservation);
+        const totalTime = _endDate.getTime() - _startDate.getTime();
+        const totalHours = Math.ceil(totalTime / (1000 * 60 * 60));
 
-        if (!validation.success) {
-          const { fieldErrors } = z.flattenError(validation.error);
+        const totalAmount = totalHours * +(productPrice || 0);
+        const totalAmountText = `$${totalAmount.toFixed(2)}`;
 
-          if (fieldErrors.start) {
-            alert("Please select a valid date and time.");
-          }
-
-          return;
-        }
-
-        dialog.open(
-          dialogId,
-          ` Are you sure you want to reserve ${productTitle}?`
-        );
-      });
-
-      dialog.cancel(dialogId);
-      dialog.confirm(dialogId, saveReservationAction, "Saving reservation...");
-
-      async function saveReservationAction() {
-        if (!reservation) {
-          return;
-        }
-
-        const { success, message, data } = await saveReservation(reservation);
-
-        if (success && data) {
-          const _startDate = new Date(startDate);
-          const _endDate = new Date(endDate);
-
-          const totalTime = _endDate.getTime() - _startDate.getTime();
-          const totalHours = Math.ceil(totalTime / (1000 * 60 * 60));
-
-          const totalAmount = totalHours * +(productPrice || 0);
-          const totalAmountText = `$${totalAmount.toFixed(2)}`;
-
-          const emailData: EmailData = {
-            email: client.email,
-            order_id: data.id,
-            orders: [
-              {
-                image_url: productImage || "",
-                room_name: productTitle || "",
-                location: productAddress || "",
-                capacity: `${productCapacity}`,
-                reserved_by: client.name,
-                reservation_date: day.textContent || "",
-                reservation_time: time.textContent || "",
-                price_per_hour: `$${productPrice || "0.00"}`,
-                details: productDetails?.split("|") || [],
-                total_price: totalAmountText,
-              },
-            ],
-            cost: {
-              total: totalAmountText,
+        const emailData: EmailData = {
+          email: client.email,
+          order_id: data.id,
+          orders: [
+            {
+              image_url: productImage || "",
+              room_name: productTitle || "",
+              location: productAddress || "",
+              capacity: `${productCapacity}`,
+              reserved_by: client.name,
+              reservation_date: day.textContent || "",
+              reservation_time: time.textContent || "",
+              price_per_hour: `$${productPrice || "0.00"}`,
+              details: productDetails?.split("|") || [],
+              total_price: totalAmountText,
             },
-          };
+          ],
+          cost: {
+            total: totalAmountText,
+          },
+        };
 
-          sendEmail(emailData);
+        sendEmail(emailData);
 
-          alert(message);
-          form.reset();
-        }
+        alert(message);
+        form.reset();
+        dispatchClearSelectionDate();
       }
     }
-  </script>
-</form>
+  }
+</script>
