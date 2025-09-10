@@ -20,6 +20,18 @@ export const onRequest = defineMiddleware(async (context, next) => {
     token = undefined;
   }
 
+  // Protección de rutas de administración
+  if (context.url.pathname.startsWith("/admin")) {
+    if (!token?.value) {
+      return context.redirect(
+        "/login?redirect=" + encodeURIComponent(context.url.pathname)
+      );
+    }
+
+    // TODO: Verificar rol de administrador aquí
+    // Por ahora permitimos a cualquier usuario autenticado
+  }
+
   if (["/login", "/register"].includes(context.url.pathname)) {
     if (token) return context.redirect("/");
     return next();
