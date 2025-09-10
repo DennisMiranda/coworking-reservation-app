@@ -1,0 +1,193 @@
+---
+import LayoutAdmin from "../../../layouts/LayoutAdmin.astro";
+---
+
+<LayoutAdmin title="Meeting Rooms Management - Admin">
+  <div class="px-4 py-6 sm:px-0">
+    <!-- Page Header -->
+    <div class="mb-8 flex justify-between items-center">
+      <div>
+        <h1 class="text-3xl font-bold text-gray-900">Meeting Rooms</h1>
+        <p class="mt-2 text-gray-600">Manage meeting rooms and spaces</p>
+      </div>
+      <button class="bg-primary text-white px-4 py-2 rounded-md hover:bg-primary/80">
+        Add New Room
+      </button>
+    </div>
+
+    <!-- Rooms Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- Room Card 1 -->
+      <div class="bg-white shadow rounded-lg overflow-hidden">
+        <img 
+          src="https://blog.gebesa.com/hs-fs/hubfs/Documentos%20Web/Imgenes%20de%20Producto/Premium/Start%20Option%20D%20-%20Kibo%20gray%20(Premium)%20RZ.jpg?width=800&height=600&name=Start%20Option%20D%20-%20Kibo%20gray%20(Premium)%20RZ.jpg" 
+          alt="Meeting Room 101" 
+          class="w-full h-48 object-cover"
+        />
+        <div class="p-6">
+          <div class="flex justify-between items-start mb-2">
+            <h3 class="text-lg font-semibold text-gray-900">Meeting Room 101</h3>
+            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+              Active
+            </span>
+          </div>
+          <p class="text-sm text-gray-600 mb-2">Av. Lima 219 | 2nd Floor</p>
+          <div class="flex justify-between text-sm text-gray-500 mb-4">
+            <span>👥 4 people</span>
+            <span>💰 $20/hour</span>
+          </div>
+          <div class="flex space-x-2">
+            <button class="flex-1 bg-blue-600 text-white py-2 px-3 rounded text-sm hover:bg-blue-700">
+              Edit
+            </button>
+            <button class="flex-1 bg-gray-200 text-gray-800 py-2 px-3 rounded text-sm hover:bg-gray-300">
+              View
+            </button>
+            <button class="bg-red-600 text-white py-2 px-3 rounded text-sm hover:bg-red-700">
+              🗑️
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Room Card 2 -->
+      <div class="bg-white shadow rounded-lg overflow-hidden">
+        <img 
+          src="https://www.limacoworking.com/images/coworkinglima.jpg" 
+          alt="Meeting Room 102" 
+          class="w-full h-48 object-cover"
+        />
+        <div class="p-6">
+          <div class="flex justify-between items-start mb-2">
+            <h3 class="text-lg font-semibold text-gray-900">Meeting Room 102</h3>
+            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+              Active
+            </span>
+          </div>
+          <p class="text-sm text-gray-600 mb-2">Av. Lima 219 | 3rd Floor</p>
+          <div class="flex justify-between text-sm text-gray-500 mb-4">
+            <span>👥 6 people</span>
+            <span>💰 $25/hour</span>
+          </div>
+          <div class="flex space-x-2">
+            <button class="flex-1 bg-blue-600 text-white py-2 px-3 rounded text-sm hover:bg-blue-700">
+              Edit
+            </button>
+            <button class="flex-1 bg-gray-200 text-gray-800 py-2 px-3 rounded text-sm hover:bg-gray-300">
+              View
+            </button>
+            <button class="bg-red-600 text-white py-2 px-3 rounded text-sm hover:bg-red-700">
+              🗑️
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Room Card 3 -->
+      <div class="bg-white shadow rounded-lg overflow-hidden">
+        <img 
+          src="https://blog.gebesa.com/hs-fs/hubfs/Documentos%20Web/Imgenes%20de%20Producto/Premium/Start%20Option%20D%20-%20Kibo%20gray%20(Premium)%20RZ.jpg?width=800&height=600&name=Start%20Option%20D%20-%20Kibo%20gray%20(Premium)%20RZ.jpg" 
+          alt="Meeting Room 103" 
+          class="w-full h-48 object-cover"
+        />
+        <div class="p-6">
+          <div class="flex justify-between items-start mb-2">
+            <h3 class="text-lg font-semibold text-gray-900">Meeting Room 103</h3>
+            <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800">
+              Maintenance
+            </span>
+          </div>
+          <p class="text-sm text-gray-600 mb-2">Av. Lima 219 | 4th Floor</p>
+          <div class="flex justify-between text-sm text-gray-500 mb-4">
+            <span>👥 8 people</span>
+            <span>💰 $30/hour</span>
+          </div>
+          <div class="flex space-x-2">
+            <button class="flex-1 bg-blue-600 text-white py-2 px-3 rounded text-sm hover:bg-blue-700">
+              Edit
+            </button>
+            <button class="flex-1 bg-gray-200 text-gray-800 py-2 px-3 rounded text-sm hover:bg-gray-300">
+              View
+            </button>
+            <button class="bg-red-600 text-white py-2 px-3 rounded text-sm hover:bg-red-700">
+              🗑️
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Room Form Modal (Hidden by default) -->
+    <div id="add-room-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+      <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+        <div class="mt-3">
+          <h3 class="text-lg font-medium text-gray-900 mb-4">Add New Meeting Room</h3>
+          <form class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Room Name</label>
+              <input type="text" class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2" placeholder="Meeting Room 104">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Address</label>
+              <input type="text" class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2" placeholder="Av. Lima 219 | 5th Floor">
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700">Capacity</label>
+                <input type="number" class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2" placeholder="4">
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700">Price/Hour</label>
+                <input type="number" class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2" placeholder="20">
+              </div>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Image URL</label>
+              <input type="url" class="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2" placeholder="https://...">
+            </div>
+            <div class="flex space-x-3 pt-4">
+              <button type="submit" class="flex-1 bg-primary text-white py-2 px-4 rounded-md hover:bg-primary/80">
+                Add Room
+              </button>
+              <button type="button" id="close-modal" class="flex-1 bg-gray-200 text-gray-800 py-2 px-4 rounded-md hover:bg-gray-300">
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const addRoomBtn = document.querySelector('button:contains("Add New Room")');
+      const modal = document.getElementById('add-room-modal');
+      const closeBtn = document.getElementById('close-modal');
+
+      // Buscar el botón correcto por texto
+      const buttons = document.querySelectorAll('button');
+      let addButton;
+      buttons.forEach(btn => {
+        if (btn.textContent?.trim() === 'Add New Room') {
+          addButton = btn;
+        }
+      });
+
+      addButton?.addEventListener('click', () => {
+        modal?.classList.remove('hidden');
+      });
+
+      closeBtn?.addEventListener('click', () => {
+        modal?.classList.add('hidden');
+      });
+
+      // Cerrar modal al hacer click fuera
+      modal?.addEventListener('click', (e) => {
+        if (e.target === modal) {
+          modal.classList.add('hidden');
+        }
+      });
+    });
+  </script>
+</LayoutAdmin>
