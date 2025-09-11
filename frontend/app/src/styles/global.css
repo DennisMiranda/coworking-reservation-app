@@ -70,3 +70,27 @@ body {
   border-color: var(--color-primary) !important;
   opacity: 0.8;
 }
+
+.notification {
+  @apply !rounded-full;
+}
+
+.info {
+  background: #1d4ed8 !important;
+  color: #fff !important;
+}
+
+.success {
+  background: #16a34a !important;
+  color: #fff !important;
+}
+
+.warning {
+  background: #f59e0b !important;
+  color: #fff !important;
+}
+
+.error {
+  background: #ef4444 !important;
+  color: #fff !important;
+}

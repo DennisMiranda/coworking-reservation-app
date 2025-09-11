@@ -94,6 +94,7 @@ const user = Astro.locals.user;
     watchForSelectionDate,
     dispatchClearSelectionDate,
   } from "/src/utils/calendar.ts";
+  import { Notification } from "/src/utils/notification.ts";
   import { saveReservation } from "/src/services/reservations.ts";
   import { sendEmail } from "/src/services/email.ts";
   import type { EmailData } from "/src/models/email.ts";
@@ -176,7 +177,7 @@ const user = Astro.locals.user;
         const { fieldErrors } = z.flattenError(validation.error);
 
         if (fieldErrors.start) {
-          alert("Please select a valid date and time.");
+          Notification.error("Please select a valid date and time.");
         }
 
         return;
@@ -230,11 +231,13 @@ const user = Astro.locals.user;
           },
         };
 
-        sendEmail(emailData);
+        // sendEmail(emailData);
 
-        alert(message);
+        Notification.success(message);
         form.reset();
         dispatchClearSelectionDate();
+      } else {
+        Notification.error(message);
       }
     }
   }

@@ -39,6 +39,7 @@ if (!product) {
     initCalendar,
     watchForClearSelectionDate,
   } from "/src/utils/calendar.ts";
+  import { Notification } from "/src/utils/notification.ts";
   import { getReservationsByProductIdFromToday } from "/src/services/reservations";
   import type { PublicReservation } from "/src/models/reservation";
 
@@ -69,6 +70,6 @@ if (!product) {
   );
 
   if (!success) {
-    alert("Error getting reservations");
+    Notification.error("Error getting reservations");
   }
 </script>
