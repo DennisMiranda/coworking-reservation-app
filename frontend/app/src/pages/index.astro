@@ -2,11 +2,15 @@
 import Welcome from "../components/Welcome.astro";
 import Layout from "../layouts/Layout.astro";
 import ProductList from "../components/products/ProductList.astro";
+import Contact from "../components/Contact.astro";
 ---
 
 <Layout>
   <Welcome />
-  <section>
+  <section id="spaces">
     <ProductList />
+  </section>
+  <section id="contact">
+    <Contact />
   </section>
 </Layout>
