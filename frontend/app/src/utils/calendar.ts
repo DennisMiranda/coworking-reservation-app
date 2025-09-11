@@ -4,6 +4,7 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 //Add plugin to select dates
 import interactionPlugin from "@fullcalendar/interaction";
+import { Notification } from "/src/utils/notification";
 
 export function initCalendar(id: string) {
   const calendarEl = document.getElementById(id);
@@ -91,7 +92,7 @@ export function initCalendar(id: string) {
 
         if (event) {
           calendar.unselect();
-          alert("Date already selected");
+          Notification.warning("Date already selected");
           return;
         }
 

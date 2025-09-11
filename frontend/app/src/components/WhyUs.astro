@@ -1,0 +1,78 @@
+---
+import { Icon } from "astro-icon/components";
+---
+
+<!-- Why us section  and direction of our spaces -->
+<section class="py-16 px-8">
+  <div id="benefits" class="p-8">
+    <h2 class="text-3xl font-bold mb-6 text-primary leading-tight">Why Us</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+      <div class="text-primary leading-relaxed space-y-4 text-md md:text-lg">
+        <p>Discover the advantages of our coworking spaces:</p>
+        <ul class="pl-6 flex flex-col gap-2 mb-4">
+          <li>
+            <Icon name="check" size={18} class="inline-block mr-2" />
+            Flexibility and adaptability
+          </li>
+          <li>
+            <Icon name="check" size={18} class="inline-block mr-2" />
+            Cozy and welcoming atmosphere
+          </li>
+          <li>
+            <Icon name="check" size={18} class="inline-block mr-2" />
+            High-quality equipment and amenities
+          </li>
+          <li>
+            <Icon name="check" size={18} class="inline-block mr-2" />
+            Convenient location
+          </li>
+        </ul>
+      </div>
+      <div>
+        <p class="text-primary leading-relaxed text-md md:text-lg">
+          Get directions to our coworking spaces:
+        </p>
+        <!-- Google Maps Embed -->
+        <div class="flex flex-col sm:flex-row gap-4">
+          <div class="w-full h-50 mt-4 rounded-2xl">
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3900.6919626015476!2d-77.042793!3d-12.046374!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9105c8b3a1fcbabf%3A0x123456789abcdef!2sCoworking%20Space!5e0!3m2!1sen!2spe!4v1693234567890"
+              width="100%"
+              height="100%"
+              style="border:0;"
+              allowfullscreen=""
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+            >
+            </iframe>
+            <p class="mt-2 text-sm text-primary">
+              Av.Lima 123, Miraflores - Lima
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Call to action -->
+<section id="call-to-action" class="py-16 px-8 bg-primary/20 text-center">
+  <div class="max-w-4xl mx-auto">
+    <h2 class="text-3xl sm:text-4xl font-bold text-primary">
+      Start selecting your space
+    </h2>
+    <p class="mt-4 text-lg sm:text-xl text-primary/80">
+      Login right now and find your perfect coworking space, where you can work,
+      learn, and grow.
+    </p>
+    <div class="mt-6 flex justify-center">
+      <a
+        href="./register"
+        class="bg-primary px-8 py-4 text-lg text-white font-semibold rounded-full
+                    shadow-lg hover:bg-primary/80 hover:scale-105 hover:shadow-xl transition-all duration-300"
+      >
+        Login Now
+      </a>
+    </div>
+  </div>
+</section>

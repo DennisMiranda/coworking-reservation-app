@@ -1,12 +1,14 @@
 ---
 const user = Astro.locals.user;
+import { Icon } from "astro-icon/components";
 ---
 
 <header
   class="flex-col bg-primary/45 text-white backdrop-blur fixed top-0 left-0 right-0 z-10 px-6 py-3 font-semibold"
 >
   <div class="flex justify-between items-center">
-    <div class="logo">
+    <div class="logo flex items-center gap-2">
+      <Icon name="workspace" size={32} />
       <a href="/">WS</a>
     </div>
 
@@ -33,43 +35,12 @@ const user = Astro.locals.user;
     <!-- Navbar -->
     <nav aria-label="Navbar" class="hidden md:block">
       <ul class="flex gap-4">
-        <li><a href="/" class="hover:text-primary transition">Home</a></li>
+        <li><a href="/" class="transition">Home</a></li>
         <li>
-          <a href="/services" class="hover:text-primary transition">Spaces</a>
+          <a href="#spaces" class="transition">Spaces</a>
         </li>
         <li>
-          <a href="/contact" class="hover:text-primary transition">Contact Us</a
-          >
-        </li>
-        {
-          user ? (
-            <>
-              <li>
-                <a href="/profile">Hi, {user.name?.split(" ")[0]}</a>
-              </li>
-              <li>
-                <button id="logout-btn">Logout</button>
-              </li>
-            </>
-          ) : (
-            <li>
-              <a href="/login">Login/Register</a>
-            </li>
-          )
-        }
-      </ul>
-    </nav>
-    <nav id="mobile-menu" class="md:hidden hidden mt-4">
-      <ul class="flex flex-col gap-4">
-        <li><a href="/" class="hover:text-primary transition">Home</a></li>
-        <li>
-          <a href="#product-list" class="hover:text-primary transition"
-            >Spaces</a
-          >
-        </li>
-        <li>
-          <a href="/contact" class="hover:text-primary transition">Contact Us</a
-          >
+          <a href="#why-us" class="transition">Contact Us</a>
         </li>
         {
           user ? (
@@ -78,7 +49,9 @@ const user = Astro.locals.user;
                 <a href="/profile">Hi, {user.name?.split(" ")[0]}</a>
               </li>
               <li>
-                <button id="logout-btn-mobile">Logout</button>
+                <button id="logout-btn">
+                  <Icon name="logout" size={20} />
+                </button>
               </li>
             </>
           ) : (
@@ -90,9 +63,38 @@ const user = Astro.locals.user;
       </ul>
     </nav>
   </div>
+
+  <nav id="mobile-menu" class="md:hidden hidden mt-4">
+    <ul class="flex flex-col gap-4">
+      <li><a href="/" class="hover:text-primary transition">Home</a></li>
+      <li>
+        <a href="#spaces" class="hover:text-primary transition">Spaces</a>
+      </li>
+      <li>
+        <a href="#why-us" class="hover:text-primary transition">Why Us</a>
+      </li>
+      {
+        user ? (
+          <>
+            <li>
+              <a href="/profile">Hi, {user.name?.split(" ")[0]}</a>
+            </li>
+            <li>
+              <button id="logout-btn-mobile">Logout</button>
+            </li>
+          </>
+        ) : (
+          <li>
+            <a href="/login">Login/Register</a>
+          </li>
+        )
+      }
+    </ul>
+  </nav>
 </header>
 
 <script>
+  import { he } from "zod/v4/locales";
   import { logOut } from "/src/services/auth/auth.client";
 
   const logoutBtn = document.getElementById("logout-btn");
@@ -105,10 +107,19 @@ const user = Astro.locals.user;
   logoutBtnMobile?.addEventListener("click", async (e) => {
     e.preventDefault();
     await logOut();
+  });
 
-    const menu = document.getElementById("menu-btn");
-    const mobileMenu = document.getElementById("mobile-menu");
-    menu?.classList.remove("hidden");
-    mobileMenu?.classList.add("hidden");
+  const menuBtn = document.getElementById("menu-btn");
+  const mobileMenu = document.getElementById("mobile-menu");
+  const header = document.querySelector("header");
+  menuBtn?.addEventListener("click", () => {
+    mobileMenu?.classList.toggle("hidden");
+  });
+  //close menu on click outside div
+
+  document.addEventListener("click", (e) => {
+    if (!header?.contains(e.target as Node)) {
+      mobileMenu?.classList.add("hidden");
+    }
   });
 </script>

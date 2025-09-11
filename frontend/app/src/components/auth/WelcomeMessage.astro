@@ -3,11 +3,14 @@ import { Icon } from "astro-icon/components";
 ---
 
 <div class="text-white h-full flex-1 px-8 pb-4 pt-8 md:p-8">
-  <h2
-    class="text-xl md:text-3xl md:font-bold font-semibold text-center md:text-left"
-  >
-    Work Space
-  </h2>
+  <div class="flex gap-2 items-center">
+    <Icon name="workspace" size={32} />
+
+    <h2
+      class="text-xl md:text-3xl md:font-bold font-semibold text-center md:text-left"
+    >
+      Work Space
+    </h2>
+  </div>
   <p class="text-lg italic md:block hidden">Find your next coworking space.</p>
-  <Icon name="linkedin" class="md:block hidden" />
 </div>
