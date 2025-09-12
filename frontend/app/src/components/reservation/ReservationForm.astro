@@ -96,7 +96,7 @@ const user = Astro.locals.user;
   } from "/src/utils/calendar.ts";
   import { Notification } from "/src/utils/notification.ts";
   import { saveReservation } from "/src/services/reservations.ts";
-  import { sendEmail } from "/src/services/email.ts";
+  import { sendEmail } from "/src/services/email/email.client.ts";
   import type { EmailData } from "/src/models/email.ts";
   import {
     reservationSchema,
@@ -231,7 +231,7 @@ const user = Astro.locals.user;
           },
         };
 
-        // sendEmail(emailData);
+        sendEmail(emailData);
 
         Notification.success(message);
         form.reset();
