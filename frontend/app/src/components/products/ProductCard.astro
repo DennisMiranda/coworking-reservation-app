@@ -13,7 +13,11 @@ const { id, title, address, capacity, price, image } = Astro.props as Product;
   data-price={price}
   data-image={image}
 >
-  <img src={image} alt={title} class="rounded-xl w-full h-48 object-cover" />
+  <img
+    src={image}
+    alt={title}
+    class="rounded-xl w-full md:h-64 h-48 object-cover"
+  />
 
   <h3 class="text-lg font-semibold">{title}</h3>
   <p class="text-sm text-primary">{address}</p>

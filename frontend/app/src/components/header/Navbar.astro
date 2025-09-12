@@ -4,7 +4,7 @@ import { Icon } from "astro-icon/components";
 ---
 
 <header
-  class="flex-col bg-primary/45 text-white backdrop-blur fixed top-0 left-0 right-0 z-10 px-6 py-3 font-semibold"
+  class="flex-col bg-primary/70 text-white backdrop-blur fixed top-0 left-0 right-0 z-10 px-6 py-3 font-semibold"
 >
   <div class="flex justify-between items-center">
     <div class="logo flex items-center gap-2">
@@ -35,12 +35,12 @@ import { Icon } from "astro-icon/components";
     <!-- Navbar -->
     <nav aria-label="Navbar" class="hidden md:block">
       <ul class="flex gap-4">
-        <li><a href="/" class="transition">Home</a></li>
+        <li><a href="/#hero" class="transition">Home</a></li>
         <li>
-          <a href="#spaces" class="transition">Spaces</a>
+          <a href="/#spaces" class="transition">Spaces</a>
         </li>
         <li>
-          <a href="#why-us" class="transition">Contact Us</a>
+          <a href="/#why-us" class="transition">Contact Us</a>
         </li>
         {
           user ? (
@@ -66,12 +66,12 @@ import { Icon } from "astro-icon/components";
 
   <nav id="mobile-menu" class="md:hidden hidden mt-4">
     <ul class="flex flex-col gap-4">
-      <li><a href="/" class="hover:text-primary transition">Home</a></li>
+      <li><a href="/#hero" class="hover:text-primary transition">Home</a></li>
       <li>
-        <a href="#spaces" class="hover:text-primary transition">Spaces</a>
+        <a href="/#spaces" class="hover:text-primary transition">Spaces</a>
       </li>
       <li>
-        <a href="#why-us" class="hover:text-primary transition">Why Us</a>
+        <a href="/#why-us" class="hover:text-primary transition">Why Us</a>
       </li>
       {
         user ? (

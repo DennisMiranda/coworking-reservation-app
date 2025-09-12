@@ -1,0 +1,19 @@
+name: Run check reservations
+on:
+  schedule:
+    # This cron expression runs the job every 30 minutes on every day.
+    - cron: "0 */30 * * *"
+  # Allows manual triggering of the workflow
+  workflow_dispatch:
+
+jobs:
+  scheduled-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call check reservations api
+        run: |
+          curl -f -w "%{http_code}" -H "Authorization: Bearer ${{ secrets.API_TOKEN }}" {{ secrets.API_URL }}
+          if [ $? -ne 0 ]; then
+            echo "API request failed"
+            exit 1
+          fi

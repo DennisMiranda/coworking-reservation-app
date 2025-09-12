@@ -140,3 +140,45 @@ export const getReservationsByProductIdFromToday = async (
     return { success: false, message: "Error retrieving reservations" };
   }
 };
+
+//Get all next reservations
+export const getUpcomingReservations = async () => {
+  try {
+    const date = new Date();
+    date.setHours(date.getHours() + 1);
+    date.setMinutes(date.getMinutes() < 30 ? 0 : 30);
+    date.setSeconds(0);
+    date.setMilliseconds(0);
+
+    const reservations: PublicReservation[] = [];
+
+    console.log(date.toISOString());
+
+    const querySnapshot = await getDocs(
+      query(
+        collection(db, "reservations"),
+        where("start", "==", date.toISOString())
+      )
+    );
+
+    querySnapshot.forEach((doc) => {
+      const { start, end, user_id, status, id, product_id } = doc.data();
+      reservations.push({
+        id,
+        start,
+        end,
+        userId: user_id,
+        productId: product_id,
+        status,
+      });
+    });
+    return {
+      success: true,
+      message: "Reservations retrieved successfully",
+      data: reservations,
+    };
+  } catch (error) {
+    console.error("Error retrieving reservations: ", error);
+    return { success: false, message: "Error retrieving reservations" };
+  }
+};
