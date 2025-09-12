@@ -84,6 +84,8 @@ export const GET: APIRoute = async ({ request }) => {
     }
     return new Response("Reminder API called", { status: 200 });
   } catch (error) {
+    console.error(error);
+
     return new Response("Error", { status: 500 });
   }
 };
