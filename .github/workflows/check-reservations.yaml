@@ -12,7 +12,7 @@ jobs:
     steps:
       - name: Call check reservations api
         run: |
-          curl -f -w "%{http_code}" -H "Authorization: Bearer ${{ secrets.API_TOKEN }}" {{ secrets.API_URL }}
+          curl -f -w "%{http_code}" -H "Authorization: Bearer ${{ secrets.REMINDER_API_TOKEN }}" ${{ secrets.REMINDER_API_URL }}
           if [ $? -ne 0 ]; then
             echo "API request failed"
             exit 1
