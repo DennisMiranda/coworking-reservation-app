@@ -13,7 +13,7 @@ import type { PublicReservation, Reservation } from "../models/reservation";
 // save reservation on firestore
 export const saveReservation = async (reservation: Reservation) => {
   try {
-    const { client, title, start, end, userId, productId, status } =
+    const { client, title, start, end, timezone, userId, productId, status } =
       reservation;
     const docUserRef = doc(collection(db, "users/" + userId + "/reservations"));
     const docReservationRef = doc(
@@ -29,6 +29,7 @@ export const saveReservation = async (reservation: Reservation) => {
       title,
       start,
       end,
+      timezone,
       user_id: userId,
       product_id: productId,
       status: status,
@@ -38,6 +39,7 @@ export const saveReservation = async (reservation: Reservation) => {
       id: docUserRef.id,
       start,
       end,
+      timezone,
       user_id: userId,
       product_id: productId,
       status: status,
@@ -72,6 +74,7 @@ export const getReservationsByProductId = async (productId: string) => {
         title,
         start,
         end,
+        timezone,
         user_id,
         status,
       } = doc.data();
@@ -85,6 +88,7 @@ export const getReservationsByProductId = async (productId: string) => {
         title,
         start,
         end,
+        timezone,
         userId: user_id,
         productId,
         status,
@@ -116,11 +120,12 @@ export const getReservationsByProductIdFromToday = async (
 
     const unsubscribe = onSnapshot(q, (snap) => {
       snap.docChanges().forEach((change) => {
-        const { start, end, user_id, status, id } = change.doc.data();
+        const { start, end, timezone, user_id, status, id } = change.doc.data();
         onChanges({
           id,
           start,
           end,
+          timezone,
           userId: user_id,
           productId,
           status,
@@ -162,11 +167,13 @@ export const getUpcomingReservations = async () => {
     );
 
     querySnapshot.forEach((doc) => {
-      const { start, end, user_id, status, id, product_id } = doc.data();
+      const { start, end, timezone, user_id, status, id, product_id } =
+        doc.data();
       reservations.push({
         id,
         start,
         end,
+        timezone,
         userId: user_id,
         productId: product_id,
         status,
