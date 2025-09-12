@@ -1,0 +1,116 @@
+---
+const user = Astro.locals.user;
+import { Icon } from "astro-icon/components";
+---
+
+<header
+  class="flex-col bg-primary/70 text-white backdrop-blur fixed top-0 left-0 right-0 z-10 px-6 py-3 font-semibold"
+>
+  <div class="flex justify-between items-center">
+    <div class="logo flex items-center gap-2">
+      <Icon name="workspace" size={32} />
+      <a href="/">WS</a>
+    </div>
+
+    <!-- Btn mobile -->
+    <button
+      id="menu-btn"
+      class="md:hidden flex items-center px-3 py-2 border rounded text-white border-white"
+      aria-label="Open menu"
+    >
+      <svg
+        class="h-6 w-6"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M4 6h16M4 12h16M4 18h16"></path>
+      </svg>
+    </button>
+
+    <!-- Navbar -->
+    <nav aria-label="Navbar" class="hidden md:block">
+      <ul class="flex gap-4">
+        <li><a href="/#hero" class="transition">Reservations</a></li>
+
+        {
+          user ? (
+            <>
+              <li>
+                <a href="/profile">Hi, {user.name?.split(" ")[0]}</a>
+              </li>
+              <li>
+                <button id="logout-btn">
+                  <Icon name="logout" size={20} />
+                </button>
+              </li>
+            </>
+          ) : (
+            <li>
+              <a href="/login">Login</a>
+            </li>
+          )
+        }
+      </ul>
+    </nav>
+  </div>
+
+  <nav id="mobile-menu" class="md:hidden hidden mt-4">
+    <ul class="flex flex-col gap-4">
+      <li>
+        <a href="/#hero" class="hover:text-primary transition">Reservations</a>
+      </li>
+
+      {
+        user ? (
+          <>
+            <li>
+              <a href="/profile">Hi, {user.name?.split(" ")[0]}</a>
+            </li>
+            <li>
+              <button id="logout-btn-mobile">Logout</button>
+            </li>
+          </>
+        ) : (
+          <li>
+            <a href="/login">Login</a>
+          </li>
+        )
+      }
+    </ul>
+  </nav>
+</header>
+
+<script>
+  import { logOut } from "/src/services/auth/auth.client";
+
+  const logoutBtn = document.getElementById("logout-btn");
+  logoutBtn?.addEventListener("click", async (e) => {
+    e.preventDefault();
+    await logOut();
+  });
+
+  const logoutBtnMobile = document.getElementById("logout-btn-mobile");
+  logoutBtnMobile?.addEventListener("click", async (e) => {
+    e.preventDefault();
+    await logOut();
+  });
+
+  const menuBtn = document.getElementById("menu-btn");
+  const mobileMenu = document.getElementById("mobile-menu");
+  const header = document.querySelector("header");
+  menuBtn?.addEventListener("click", () => {
+    mobileMenu?.classList.toggle("hidden");
+  });
+  //close menu on click outside div
+
+  document.addEventListener("click", (e) => {
+    if (!header?.contains(e.target as Node)) {
+      mobileMenu?.classList.add("hidden");
+    }
+  });
+</script>
