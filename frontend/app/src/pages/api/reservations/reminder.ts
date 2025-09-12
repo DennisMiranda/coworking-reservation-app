@@ -63,9 +63,13 @@ export const GET: APIRoute = async ({ request }) => {
           continue;
         }
 
-        const { client_email, client_name, start, end } =
+        const { client_email, client_name, start, end, timezone } =
           doc.data() as UserReservationResponse;
-        const { day, timeStart, timeEnd } = getReservationDate(start, end);
+        const { day, timeStart, timeEnd } = getReservationDate(
+          start,
+          end,
+          timezone || 0
+        );
 
         const emailReminderData: EmailReminderData = {
           order_id: reservation.id,
