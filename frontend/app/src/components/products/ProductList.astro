@@ -1,50 +1,16 @@
 ---
 import ProductCard from "./ProductCard.astro";
+import { getAllProducts } from "/src/services/products";
+const data = await getAllProducts();
 
-const rooms = [
-  {
-    id: 1,
-    title: "Meeting Room 101",
-    address: "Av. Lima 219 | 2nd Floor",
-    capacity: 4,
-    price: 20,
-    image:
-      "https://blog.gebesa.com/hs-fs/hubfs/Documentos%20Web/Imgenes%20de%20Producto/Premium/Start%20Option%20D%20-%20Kibo%20gray%20(Premium)%20RZ.jpg?width=800&height=600&name=Start%20Option%20D%20-%20Kibo%20gray%20(Premium)%20RZ.jpg",
-  },
-  {
-    id: 2,
-    title: "Meeting Room 202",
-    address: "Av. Lima 219 | 3rd Floor",
-    capacity: 6,
-    price: 25,
-    image: "https://www.limacoworking.com/images/coworkinglima.jpg",
-  },
-  {
-    id: 3,
-    title: "Meeting Room 101",
-    address: "Av. Lima 219 | 2nd Floor",
-    capacity: 4,
-    price: 20,
-    image:
-      "https://blog.gebesa.com/hs-fs/hubfs/Documentos%20Web/Imgenes%20de%20Producto/Premium/Start%20Option%20D%20-%20Kibo%20gray%20(Premium)%20RZ.jpg?width=800&height=600&name=Start%20Option%20D%20-%20Kibo%20gray%20(Premium)%20RZ.jpg",
-  },
-  {
-    id: 4,
-    title: "Meeting Room 101",
-    address: "Av. Lima 219 | 2nd Floor",
-    capacity: 4,
-    price: 20,
-    image:
-      "https://blog.gebesa.com/hs-fs/hubfs/Documentos%20Web/Imgenes%20de%20Producto/Premium/Start%20Option%20D%20-%20Kibo%20gray%20(Premium)%20RZ.jpg?width=800&height=600&name=Start%20Option%20D%20-%20Kibo%20gray%20(Premium)%20RZ.jpg",
-  },
-];
+let rooms = data || [];
 ---
 
 <div id="product-list" class="p-8">
-  <h2 class="text-3xl font-bold mb-6">OUR SPACES</h2>
+  <h2 class="text-3xl font-bold mb-6">Our Spaces</h2>
   <div
     id="service-list"
-    class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+    class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:gap-14 gap-8"
   >
     {rooms.map((room) => <ProductCard {...room} />)}
   </div>
