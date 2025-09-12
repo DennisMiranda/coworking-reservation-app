@@ -20,3 +20,19 @@ interface Order {
   details: string[];
   total_price: string;
 }
+
+export interface EmailSettingsResponse {
+  reminder_subject: string;
+  reminder_content: string;
+}
+
+export interface EmailReminderData {
+  order_id: string;
+  room_name: string;
+  location: string;
+  reserved_by: string;
+  reservation_date: string;
+  reservation_time: string;
+  image_url: string;
+  email: string;
+}

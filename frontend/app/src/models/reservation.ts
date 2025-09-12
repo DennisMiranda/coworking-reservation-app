@@ -29,3 +29,16 @@ export const PublicReservationSchema = reservationSchema.pick({
 });
 
 export type PublicReservation = z.infer<typeof PublicReservationSchema>;
+
+export interface UserReservationResponse {
+  client_email: string;
+  client_name: string;
+  client_phone: string;
+  end: string;
+  id: string;
+  product_id: string;
+  start: string;
+  status: string;
+  title: string;
+  user_id: string;
+}
