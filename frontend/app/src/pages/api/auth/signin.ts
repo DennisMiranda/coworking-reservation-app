@@ -12,8 +12,11 @@ export const GET: APIRoute = async ({ request, cookies, redirect }) => {
   }
 
   /* Verify id token */
+  let role = "user";
   try {
     const decodedToken = await auth.verifyIdToken(idToken);
+
+    role = decodedToken.role;
     const user = await auth.getUser(decodedToken.uid);
   } catch (error) {
     return new Response("Invalid token", { status: 401 });
@@ -30,7 +33,11 @@ export const GET: APIRoute = async ({ request, cookies, redirect }) => {
   });
 
   return new Response(
-    JSON.stringify({ success: true, message: "User signed in", data: {} }),
+    JSON.stringify({
+      success: true,
+      message: "User signed in",
+      data: { role },
+    }),
     { status: 200 }
   );
 };

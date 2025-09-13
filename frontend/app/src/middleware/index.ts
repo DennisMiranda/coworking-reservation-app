@@ -14,6 +14,7 @@ export const onRequest = defineMiddleware(async (context, next) => {
         name: decodedToken.name,
         email: decodedToken.email || "",
         picture: decodedToken.picture || "",
+        role: decodedToken.role || "user",
       };
     }
   } else {
@@ -31,6 +32,9 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
     // TODO: Verificar rol de administrador aquí
     // Por ahora permitimos a cualquier usuario autenticado
+    if (context.locals.user?.role !== "admin") {
+      return context.redirect("/");
+    }
   }
 
   if (["/login", "/register"].includes(context.url.pathname)) {
