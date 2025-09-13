@@ -134,8 +134,16 @@ justify-center">
         JSON.stringify({ uid, displayName, email })
       );
 
-      const { status } = await getSessionCookies(data.token);
-      if (status === 200) {
+      const response = await getSessionCookies(data.token);
+      const { success, data: sessionData } = await response.json();
+      if (success) {
+        const { role } = sessionData;
+
+        if (role == "admin") {
+          window.location.assign("/admin");
+          return;
+        }
+
         const urlParams = new URLSearchParams(window.location.search);
         window.location.assign(urlParams.get("redirect") || "/");
       } else {

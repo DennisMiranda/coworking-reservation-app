@@ -23,15 +23,20 @@ export const adminMiddleware = defineMiddleware(async (context, next) => {
       return redirect("/login?redirect=" + encodeURIComponent(url.pathname));
     }
 
+    if (decodedToken.role !== "admin") {
+      return redirect("/");
+    }
+
     // TODO: Verificar rol de administrador en Firestore
     // Por ahora, cualquier usuario autenticado puede acceder al admin
     // En producción, deberías verificar si el usuario tiene rol 'admin'
 
     context.locals.user = {
+      uid: decodedToken.uid,
       name: decodedToken.name || "Admin",
       email: decodedToken.email || "",
       picture: decodedToken.picture || "",
-      isAdmin: true, // Temporal - en producción verificar desde la DB
+      role: "admin",
     };
 
     return next();
