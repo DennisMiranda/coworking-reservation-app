@@ -3,12 +3,21 @@ import {
   collection,
   setDoc,
   getDocs,
+  getDoc,
+  updateDoc,
+  deleteDoc,
   query,
   where,
   onSnapshot,
+  orderBy,
 } from "firebase/firestore";
 import { db } from "/src/services/firebase/firebase.client";
-import type { PublicReservation, Reservation } from "../models/reservation";
+import type {
+  PublicReservation,
+  Reservation,
+  UserReservationResponse,
+} from "../models/reservation";
+import type { Product } from "../models/product";
 
 // save reservation on firestore
 export const saveReservation = async (reservation: Reservation) => {
@@ -157,8 +166,6 @@ export const getUpcomingReservations = async () => {
 
     const reservations: PublicReservation[] = [];
 
-    console.log(date.toISOString());
-
     const querySnapshot = await getDocs(
       query(
         collection(db, "reservations"),
@@ -183,6 +190,69 @@ export const getUpcomingReservations = async () => {
       success: true,
       message: "Reservations retrieved successfully",
       data: reservations,
+    };
+  } catch (error) {
+    console.error("Error retrieving reservations: ", error);
+    return { success: false, message: "Error retrieving reservations" };
+  }
+};
+
+//Get all reservations order by date on realtime
+export const getAllReservations = async (
+  onChanges: (reservation: UserReservationResponse, product: Product) => void
+) => {
+  try {
+    const productsDocs = await getDocs(collection(db, "products"));
+
+    const products: { [key: string]: Product } = {};
+    productsDocs.forEach((doc) => {
+      products[doc.id] = doc.data() as Product;
+    });
+    const q = query(collection(db, "reservations"), orderBy("start", "asc"));
+
+    const unsubscribe = onSnapshot(q, (snap) => {
+      snap.docChanges().forEach(async (change) => {
+        const { start, end, timezone, user_id, status, id } = change.doc.data();
+
+        //Get user reservation
+        const userDocRef = doc(db, "users", user_id);
+
+        const userReservationRef = doc(userDocRef, "reservations", id);
+
+        const reservationDetails = await getDoc(userReservationRef);
+
+        if (!reservationDetails.exists()) {
+          return;
+        }
+
+        const { product_id, client_email, client_name, client_phone, title } =
+          reservationDetails.data() as UserReservationResponse;
+
+        onChanges(
+          {
+            id,
+            start,
+            end,
+            timezone,
+            user_id,
+            product_id,
+            status,
+            client_email,
+            client_name,
+            client_phone,
+            title,
+          },
+          products[product_id]
+        );
+      });
+    });
+
+    return {
+      success: true,
+      message: "Reservations retrieved successfully",
+      data: {
+        unsubscribe,
+      },
     };
   } catch (error) {
     console.error("Error retrieving reservations: ", error);

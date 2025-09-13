@@ -87,7 +87,7 @@ export function initCalendar(id: string) {
           if (!ev.start) return false;
           const evStart = new Date(ev.start).getTime();
 
-          return evStart >= start && evStart <= end;
+          return evStart >= start && evStart < end;
         });
 
         if (event) {
