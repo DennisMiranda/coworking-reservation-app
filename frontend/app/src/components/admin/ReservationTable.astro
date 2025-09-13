@@ -1,0 +1,254 @@
+<!--  Reservations Table -->
+<div class="bg-white shadow rounded-lg p-6">
+  <h3 class="text-lg font-medium text-gray-900 mb-4">Reservations</h3>
+
+  <div class="overflow-hidden">
+    <table class="min-w-full divide-y divide-gray-200">
+      <thead class="bg-gray-50">
+        <tr>
+          <th
+            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+          >
+            Meeting Room
+          </th>
+
+          <th
+            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+          >
+            Date
+          </th>
+          <th
+            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+          >
+            Time
+          </th>
+          <th
+            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+          >
+            Client Name
+          </th>
+          <th
+            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+          >
+            Status
+          </th>
+          <th
+            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+          >
+            Actions
+          </th>
+        </tr>
+      </thead>
+      <tbody id="reservations" class="bg-white divide-y divide-gray-200">
+      </tbody>
+    </table>
+  </div>
+  <!-- Pagination Controls -->
+  <div class="flex justify-between items-center mt-4">
+    <button
+      id="prevPage"
+      class="px-4 py-2 bg-gray-200 rounded-xl disabled:opacity-50"
+      >Previous</button
+    >
+    <span id="pageInfo" class="text-sm text-gray-600"></span>
+    <button
+      id="nextPage"
+      class="px-2 py-1 bg-gray-200 rounded-xl disabled:opacity-50">Next</button
+    >
+  </div>
+</div>
+
+<!-- <script>
+  import { getAllReservations } from "/src/services/reservations";
+
+  const table = document.getElementById("reservations");
+
+  const prevBtn = document.getElementById(
+    "prevPage"
+  ) as HTMLButtonElement | null;
+  const nextBtn = document.getElementById(
+    "nextPage"
+  ) as HTMLButtonElement | null;
+  const pageInfo = document.getElementById("pageInfo") as HTMLElement | null;
+
+  const reservations = []; // guardamos todas las reservas
+  let currentPage = 1;
+  const pageSize = 5;
+
+  // Escuchar cada reserva en tiempo real
+  getAllReservations((res, product) => {
+    if (!table) return;
+
+    // Formatear fecha y hora
+    const startDate = new Date(res.start);
+    const endDate = new Date(res.end);
+
+    const dateStr = startDate.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+    });
+
+    const timeStr = `${startDate.toLocaleTimeString("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+    })} - ${endDate.toLocaleTimeString("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+    })}`;
+
+    // Crear fila
+    const row = document.createElement("tr");
+    row.classList.add("hover:bg-gray-50");
+    row.setAttribute("id", `reservation-${res.id}`);
+
+    row.innerHTML = `
+      <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+        ${product.title}
+      </td>
+      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+        ${dateStr}
+      </td>
+      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+        ${timeStr}
+      </td>
+      <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+        ${res.client_name || "N/A"}
+      </td>
+      <td class="px-6 py-4 whitespace-nowrap">
+        <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full 
+          ${res.status === "active" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}">
+          ${res.status}
+        </span>
+      </td>
+      <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+        <button
+          class="text-indigo-600 hover:text-indigo-900 mr-3 edit-reservation-btn"
+          data-reservation-id="${res.id}"
+        >
+          ✏️
+        </button>
+      </td>
+    `;
+
+    // Insert Table
+    table.appendChild(row);
+  });
+</script> -->
+
+<script>
+  import type { Product } from "/src/models/product";
+  import type { UserReservationResponse } from "/src/models/reservation";
+  import { getAllReservations } from "/src/services/reservations";
+
+  const table = document.getElementById(
+    "reservations"
+  ) as HTMLTableSectionElement | null;
+  const prevBtn = document.getElementById(
+    "prevPage"
+  ) as HTMLButtonElement | null;
+  const nextBtn = document.getElementById(
+    "nextPage"
+  ) as HTMLButtonElement | null;
+  const pageInfo = document.getElementById("pageInfo") as HTMLElement | null;
+
+  const reservations: { res: UserReservationResponse; product: Product }[] = [];
+  let currentPage = 1;
+  const pageSize = 5;
+
+  const renderPage = () => {
+    if (!table) return;
+
+    table.innerHTML = "";
+    const startIndex = (currentPage - 1) * pageSize;
+    const pageReservations = reservations.slice(
+      startIndex,
+      startIndex + pageSize
+    );
+
+    pageReservations.forEach(({ res, product }) => {
+      const startDate = new Date(res.start);
+      const endDate = new Date(res.end);
+
+      const dateStr = startDate.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+      });
+      const timeStr = `${startDate.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })} - ${endDate.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })}`;
+
+      const row = document.createElement("tr");
+      row.classList.add("hover:bg-gray-50");
+      row.setAttribute("id", `reservation-${res.id}`);
+      row.dataset.client_email = res.client_email || "";
+      row.dataset.client_name = res.client_name || "";
+      row.dataset.client_phone = res.client_phone || "";
+      row.dataset.id = res.id || "";
+      row.dataset.product_id = res.product_id || "";
+      row.dataset.user_id = res.user_id || "";
+      row.dataset.start = res.start || "";
+      row.dataset.end = res.end || "";
+      row.dataset.timezone = `${res.timezone || "0"}`;
+      row.dataset.title = res.title || "";
+      row.dataset.status = res.status || "";
+
+      row.innerHTML = `
+        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${product.title}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${dateStr}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${timeStr}</td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${res.client_name || "N/A"}</td>
+        <td class="px-6 py-4 whitespace-nowrap">
+          <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full 
+            ${res.status === "active" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}">
+            ${res.status}
+          </span>
+        </td>
+        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+          <button class="text-indigo-600 hover:text-indigo-900 mr-3 edit-reservation-btn" 
+          data-reservation-id="${res.id}"
+          data-client_email="${res.client_email}"
+          data-client_name="${res.client_name}"
+          data-client_phone="${res.client_phone}"
+          data-id="${res.id}"
+          data-product_id="${res.product_id}"
+          data-user_id="${res.user_id}"
+          data-start="${res.start}"
+          data-end="${res.end}"
+          data-timezone="${res.timezone}"
+          data-title="${res.title}"
+          data-status="${res.status}"
+          >✏️</button>
+        </td>
+      `;
+      table.appendChild(row);
+    });
+
+    if (pageInfo)
+      pageInfo.textContent = `Page ${currentPage} of ${Math.ceil(reservations.length / pageSize)}`;
+    if (prevBtn) prevBtn.disabled = currentPage === 1;
+    if (nextBtn)
+      nextBtn.disabled =
+        currentPage === Math.ceil(reservations.length / pageSize);
+  };
+
+  getAllReservations((res, product) => {
+    const index = reservations.findIndex((r) => r.res.id === res.id);
+    if (index !== -1) {
+      reservations.splice(index, 1);
+    }
+    reservations.unshift({ res, product });
+    renderPage();
+  });
+
+  prevBtn?.addEventListener("click", () => {
+    if (currentPage > 1) {
+      currentPage--;
+      renderPage();
+    }
+  });
+
+  nextBtn?.addEventListener("click", () => {
+    if (currentPage < Math.ceil(reservations.length / pageSize)) {
+      currentPage++;
+      renderPage();
+    }
+  });
+</script>

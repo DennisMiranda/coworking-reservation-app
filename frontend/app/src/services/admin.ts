@@ -13,7 +13,7 @@ import {
   setDoc,
 } from "firebase/firestore";
 import { db } from "/src/services/firebase/firebase.client";
-import type { Reservation } from "/src/models/reservation";
+import type { PublicReservation, Reservation } from "/src/models/reservation";
 
 // Interfaz para estadísticas del dashboard
 export interface DashboardStats {
@@ -28,7 +28,6 @@ export interface AdminReservation extends Reservation {
   id: string;
   createdAt?: Date;
   updatedAt?: Date;
-  status: "active" | "pending" | "cancelled" | "completed";
 }
 
 // Obtener todas las reservas para administración
@@ -60,6 +59,7 @@ export const getAllReservations = async (): Promise<{
         title: data.title,
         start: data.start,
         end: data.end,
+        timezone: data.timezone,
         userId: data.user_id || data.userId,
         productId: data.product_id || data.productId,
         status: data.status || "active",
@@ -112,6 +112,7 @@ export const getRecentReservations = async (
         title: data.title,
         start: data.start,
         end: data.end,
+        timezone: data.timezone,
         userId: data.user_id || data.userId,
         productId: data.product_id || data.productId,
         status: data.status || "active",
@@ -136,6 +137,7 @@ export const getRecentReservations = async (
 // Actualizar una reserva
 export const updateReservation = async (
   reservationId: string,
+  userId: string,
   updateData: Partial<AdminReservation>
 ): Promise<{
   success: boolean;
@@ -143,9 +145,17 @@ export const updateReservation = async (
 }> => {
   try {
     const reservationRef = doc(db, "reservations", reservationId);
+    const userReservationRef = doc(
+      db,
+      "users",
+      userId,
+      "reservations",
+      reservationId
+    );
 
     const dataToUpdate: any = {
       ...updateData,
+      timezone: updateData.timezone || 0,
       updatedAt: Timestamp.now(),
     };
 
@@ -157,7 +167,12 @@ export const updateReservation = async (
       delete dataToUpdate.client;
     }
 
-    await updateDoc(reservationRef, dataToUpdate);
+    await updateDoc(userReservationRef, dataToUpdate);
+    await updateDoc(reservationRef, {
+      start: updateData.start,
+      end: updateData.end,
+      timezone: updateData.timezone,
+    } as PublicReservation);
 
     return {
       success: true,

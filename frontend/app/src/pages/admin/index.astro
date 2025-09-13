@@ -6,88 +6,23 @@ import ReservationDetail from "../../components/admin/ReservationDetail.astro";
 ---
 
 <LayoutAdmin title="Admin Dashboard - Coworking Reservations">
-  <div class="px-4 py-6 sm:px-0">
+  <h1 class="text-3xl font-bold text-primary mx-6 pt-8 mt-14">
+    Reservations Dashboard
+  </h1>
+  <div class="px-6 py-6">
     <!-- Top Section - Recent Reservations Tables Side by Side -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-      <!-- First Recent Reservations Table -->
-      <ReservationTable />
-      
-      <!-- Second Recent Reservations Table -->
-      <div class="bg-white shadow rounded-lg p-6">
-        <h3 class="text-lg font-medium text-gray-900 mb-4">Recent reservations</h3>
-        
-        <div class="overflow-hidden">
-          <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
-              <tr>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Meeting Room
-                </th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Date
-                </th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
-                </th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
-              <tr class="hover:bg-gray-50">
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                  Meeting Room 101
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  Sep 15
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-                    Active
-                  </span>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <button class="text-indigo-600 hover:text-indigo-900 mr-3 edit-reservation-btn" 
-                          data-reservation-id="4">
-                    ✏️
-                  </button>
-                </td>
-              </tr>
-              <tr class="hover:bg-gray-50">
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                  Meeting Room 102
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  Sep 16
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <span class="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
-                    Active
-                  </span>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                  <button class="text-indigo-600 hover:text-indigo-900 mr-3 edit-reservation-btn" 
-                          data-reservation-id="5">
-                    ✏️
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+    <div
+      class="grid grid-cols-1 lg:grid-cols-3 lg:grid-rows-[auto_auto] gap-6 mb-8"
+    >
+      <div class="order-1 lg:col-span-2 lg:row-span-1">
+        <ReservationTable />
       </div>
-    </div>
 
-    <!-- Bottom Section - Calendar Left and Form Right -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <!-- Calendar Section - Left Side -->
-      <div>
+      <div class="order-3 lg:col-span-2 lg:row-span-1">
         <AdminCalendar />
       </div>
-      
-      <!-- Reservation Detail Panel - Right Side -->
-      <div>
+
+      <div class="order-2 lg:col-span-1 lg:row-span-2">
         <ReservationDetail />
       </div>
     </div>
